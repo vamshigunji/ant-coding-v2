@@ -31,8 +31,20 @@ class Task:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
+VALID_FAILURE_CATEGORIES = frozenset({
+    "planning",
+    "implementation",
+    "integration",
+    "hallucination_cascade",
+    "timeout",
+    "tool_failure",
+})
+
+
 @dataclass
 class TaskResult:
+    """Result of running a single task in an experiment."""
+
     task_id: str
     experiment_id: str
     success: bool
@@ -42,3 +54,10 @@ class TaskResult:
     agent_traces: List[Dict[str, Any]] = field(default_factory=list)
     error: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    # PRD+ fields
+    intermediate_test_results: List[bool] = field(default_factory=list)
+    failure_category: Optional[str] = None
+    generated_patch_lines: int = 0
+    gold_patch_lines: int = 0
+    judge_scores: Optional[Dict[str, Any]] = None

@@ -252,7 +252,7 @@ sprint_3:
         - id: S3-E3-S01
           name: "Extend TaskResult with PRD+ Fields"
           branch: feature/S3-E3-S01
-          status: not-started
+          status: done
           points: 3
           prd_plus: true
 
