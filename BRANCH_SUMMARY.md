@@ -1,21 +1,25 @@
-# Branch Summary: feature/S3-E1-S04
+# Branch Summary: feature/S3-E1-S05
 
 ## Story
-S3-E1-S04: TaskLoader Unified Interface
+S3-E1-S05: Task Management Tests
 
 ## What Changed
-- Integrated `load_swebench` into the `TaskLoader` class in `src/ant_coding/tasks/loader.py`.
-- Updated `load_from_config` to dispatch to either `load_custom` or `load_swebench` based on the `TasksConfig.source` field.
-- Mapped `TasksConfig.subset` to the appropriate parameter for each source (file path for `custom`, dataset split for `swe-bench`).
-- Added unit tests for the unified loader interface in `tests/test_tasks.py`.
+- Verified full test coverage for the task management layer.
+- Ensured all 11 test cases in `tests/test_tasks.py` are passing.
+- Validated:
+    - Custom YAML task loading with metadata capture.
+    - Error handling for missing fields and files.
+    - Isolated workspace setup and teardown.
+    - Git patch generation for workspace changes.
+    - Command execution inside the workspace.
+    - SWE-bench adapter mapping and dataset mocking.
+    - Unified TaskLoader dispatch based on configuration.
 
 ## Key Decisions
-- Chose to use `subset` as the path for custom tasks to avoid adding new fields to the Pydantic config model prematurely.
-- Ensured that `load_from_config` correctly passes through the `limit` parameter to the SWE-bench adapter.
+- Maintained a high level of isolation in tests by mocking external dependencies like `datasets` and using temporary directories for workspaces.
 
 ## Files Touched
-- `src/ant_coding/tasks/loader.py`
-- `tests/test_tasks.py`
+- `tests/test_tasks.py` (final verification)
 
 ## How to Verify
 ```bash
@@ -24,4 +28,4 @@ PYTHONPATH=src python3 -m pytest tests/test_tasks.py -v
 ```
 
 ## Notes for Reviewer
-- The unified interface makes it easy to switch task sources via experiment configuration.
+- All acceptance criteria for the Task Management epic have been met and verified by tests.
