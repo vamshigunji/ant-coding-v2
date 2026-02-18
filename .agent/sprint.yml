@@ -234,7 +234,7 @@ sprint_3:
         - id: S3-E2-S05
           name: "ToolRegistry"
           branch: feature/S3-E2-S05
-          status: not-started
+          status: done
           points: 2
 
         - id: S3-E2-S06
