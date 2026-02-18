@@ -259,7 +259,7 @@ sprint_3:
         - id: S3-E3-S02
           name: "Extend ExperimentMetrics with 4-Tier Fields"
           branch: feature/S3-E3-S02
-          status: not-started
+          status: done
           points: 3
           prd_plus: true
 
