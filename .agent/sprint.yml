@@ -41,7 +41,7 @@ sprints:
             status: done
           - id: S2-E1-S02
             title: "Token Budget Enforcement"
-            status: not-started
+            status: in-progress
           - id: S2-E1-S03
             title: "ModelRegistry with YAML Loading"
             status: not-started

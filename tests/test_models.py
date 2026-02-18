@@ -2,7 +2,7 @@ import pytest
 import asyncio
 from unittest.mock import AsyncMock, patch, MagicMock
 from ant_coding.core.config import ModelConfig
-from ant_coding.models.provider import ModelProvider, ModelError
+from ant_coding.models.provider import ModelProvider, ModelError, TokenBudgetExceeded
 
 @pytest.fixture
 def mock_model_config():
@@ -88,3 +88,36 @@ def test_model_provider_reset_usage(mock_model_config, monkeypatch):
     usage = provider.get_usage()
     assert usage["total_tokens"] == 0
     assert usage["total_cost_usd"] == 0.0
+
+@pytest.mark.asyncio
+async def test_model_provider_token_budget_enforcement(mock_model_config, monkeypatch):
+    monkeypatch.setenv("TEST_API_KEY", "fake-key")
+    
+    # Budget of 50 tokens
+    provider = ModelProvider(mock_model_config, token_budget=50)
+    
+    mock_response = MagicMock()
+    mock_response.usage.prompt_tokens = 30
+    mock_response.usage.completion_tokens = 30
+    mock_response.usage.total_tokens = 60
+    
+    with patch("ant_coding.models.provider.acompletion", new_callable=AsyncMock) as mock_acompletion:
+        mock_acompletion.return_value = mock_response
+        
+        # This call should exceed the budget
+        with pytest.raises(TokenBudgetExceeded) as excinfo:
+            await provider.complete(messages=[])
+            
+        assert excinfo.value.current_tokens == 60
+        assert excinfo.value.budget_limit == 50
+        assert excinfo.value.last_call_tokens == 60
+
+@pytest.mark.asyncio
+async def test_model_provider_pre_call_budget_check(mock_model_config, monkeypatch):
+    monkeypatch.setenv("TEST_API_KEY", "fake-key")
+    provider = ModelProvider(mock_model_config, token_budget=50)
+    provider.prompt_tokens = 60 # Already exceeded
+    
+    with pytest.raises(TokenBudgetExceeded) as excinfo:
+        await provider.complete(messages=[])
+    assert excinfo.value.current_tokens == 60
