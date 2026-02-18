@@ -1,26 +1,27 @@
-# Branch Summary: feature/S3-E2-S05
+# Branch Summary: feature/S3-E2-S06
 
 ## Story
-S3-E2-S05: ToolRegistry
+S3-E2-S06: Tool Layer Tests
 
 ## What Changed
-- Added `ToolRegistry` class that wires all tools (CodeExecutor, FileOperations, GitOperations, CodebaseSearch) together
-- `as_dict()` method returns all tool instances keyed by name
-- Added 2 test cases to `tests/test_tools.py`
+- Rewrote `tests/test_tools.py` with organized sections and 26 comprehensive test cases
+- Fixed duplicate test function from earlier stories
+- Added missing coverage: FileOps delete, FileOps read nonexistent, GitOps diff (separate), GitOps untracked, Search find_definition for functions
+- All tool categories well covered: CodeExecutor (5), FileOps (8), GitOps (4), Search (7), ToolRegistry (2)
 
 ## Key Decisions
-- ToolRegistry accepts optional `code_timeout` parameter for CodeExecutor configuration
-- All workspace-scoped tools share the same `workspace_dir`
+- Consolidated all tool tests in single file per epic specification
+- Added module-level docstring and section comments for organization
 
 ## Files Touched
-- `src/ant_coding/tools/registry.py` (new)
-- `tests/test_tools.py` (modified — added registry tests)
-- `.agent/sprint.yml` (status update)
+- `tests/test_tools.py` (rewritten)
+- `.agent/sprint.yml` (status updates: S3-E2-S06 done, S3-E2 epic → review)
 
 ## How to Verify
 ```bash
-pytest tests/test_tools.py -v -k "registry"
+pytest tests/test_tools.py -v
 ```
 
 ## Notes for Reviewer
-- Simple wiring class. Could be extended with tool configuration from experiment config in future sprints.
+- 26 tests, all passing. Exceeds the 15-test minimum from acceptance criteria.
+- Epic S3-E2 (Tool Layer) is now complete and marked for review.

@@ -205,7 +205,7 @@ sprint_3:
     - id: S3-E2
       name: "Tool Layer"
       file: stories_and_epics/Sprint-3-Epic-2.md
-      status: in-progress
+      status: review
       stories:
         - id: S3-E2-S01
           name: "CodeExecutor with Sandboxing"
@@ -240,7 +240,7 @@ sprint_3:
         - id: S3-E2-S06
           name: "Tool Layer Tests"
           branch: feature/S3-E2-S06
-          status: not-started
+          status: done
           points: 3
 
     # ── NEW EPIC (PRD+) ──
