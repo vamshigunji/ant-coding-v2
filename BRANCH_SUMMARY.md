@@ -1,28 +1,29 @@
-# Branch Summary: feature/S1-E1-S02
+# Branch Summary: feature/S1-E1-S03
 
 ## Story
-S1-E1-S02: Create Directory Structure
+S1-E1-S03: Environment Configuration
 
 ## What Changed
-- Created the full directory tree as specified in the PRD.
-- Added `__init__.py` files for all Python packages.
-- Added `.gitkeep` files for `results/` and `tasks/custom/` directories to ensure they are tracked by Git.
+- Created `.env.example` with placeholders for API keys.
+- Created `.gitignore` to prevent committing sensitive files and build artifacts.
+- Implemented `get_env` utility in `src/ant_coding/core/config.py` for safe environment variable access.
+- Added unit tests for `get_env` in `tests/test_env.py`.
 
 ## Key Decisions
-- Followed the directory structure exactly as listed in the story's acceptance criteria.
-- Ensured `src/ant_coding/orchestration/` has an `__init__.py` (it was implied by its sub-directory having one, but I added it explicitly).
+- Implemented a custom `ConfigError` for better error reporting when required keys are missing.
+- Used `python-dotenv` to support loading from `.env` files locally.
 
 ## Files Touched
-- New directories and `__init__.py` files in `src/ant_coding/`.
-- New configuration directories in `configs/`.
-- `results/.gitkeep`
-- `tasks/custom/.gitkeep`
+- `.env.example`
+- `.gitignore`
+- `src/ant_coding/core/config.py`
+- `tests/test_env.py`
 
 ## How to Verify
 ```bash
-find src/ant_coding -name "__init__.py" | wc -l
-# Should be at least 10
+source .venv/bin/activate
+PYTHONPATH=src python3 -m pytest tests/test_env.py -v
 ```
 
 ## Notes for Reviewer
-- All directories are currently empty except for `__init__.py` or `.gitkeep` files.
+- The `get_env` function is tested for success, failure (raises `ConfigError`), and default value support.
