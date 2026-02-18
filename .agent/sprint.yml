@@ -17,7 +17,7 @@ sprints:
             status: done
           - id: S1-E1-S03
             title: "Environment Configuration"
-            status: not-started
+            status: in-progress
           - id: S1-E1-S04
             title: "YAML Config Loader with Pydantic Validation"
             status: not-started
