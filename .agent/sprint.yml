@@ -34,7 +34,7 @@ sprints:
     epics:
       - id: S2-E1
         title: "Model Layer Implementation"
-        status: in-progress
+        status: review
         stories:
           - id: S2-E1-S01
             title: "ModelConfig and ModelProvider Core"
@@ -47,5 +47,5 @@ sprints:
             status: done
           - id: S2-E1-S04
             title: "Model Layer Unit Tests"
-            status: in-progress
+            status: done
 
