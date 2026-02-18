@@ -80,7 +80,7 @@ sprints:
     epics:
       - id: S3-E1
         title: "Task Management"
-        status: in-progress
+        status: review
         stories:
           - id: S3-E1-S01
             title: "Custom YAML Task Loader"
@@ -96,7 +96,7 @@ sprints:
             status: done
           - id: S3-E1-S05
             title: "Task Management Tests"
-            status: in-progress
+            status: done
       - id: S3-E2
         title: "Agent Layer Implementation"
         status: not-started
