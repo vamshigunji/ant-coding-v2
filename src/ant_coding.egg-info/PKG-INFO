@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: ant-coding
+Version: 0.1.0
+Summary: A framework for benchmarking agentic coding architectures.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pyyaml
+Requires-Dist: pydantic
+Requires-Dist: litellm
+Requires-Dist: google-adk
+Requires-Dist: gitpython
+Requires-Dist: scipy
+Requires-Dist: numpy
+Requires-Dist: rich
+Requires-Dist: aiofiles
+Requires-Dist: python-dotenv
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-asyncio; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Provides-Extra: swebench
+Requires-Dist: swe-bench; extra == "swebench"
+Requires-Dist: datasets; extra == "swebench"
+
+# ant-coding
+
+A framework for benchmarking agentic coding architectures.

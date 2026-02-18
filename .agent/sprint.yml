@@ -11,7 +11,7 @@ sprints:
         stories:
           - id: S1-E1-S01
             title: "Initialize Python Project"
-            status: not-started
+            status: in-progress
           - id: S1-E1-S02
             title: "Create Directory Structure"
             status: not-started

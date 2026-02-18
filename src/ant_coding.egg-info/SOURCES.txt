@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/ant_coding/__init__.py
+src/ant_coding.egg-info/PKG-INFO
+src/ant_coding.egg-info/SOURCES.txt
+src/ant_coding.egg-info/dependency_links.txt
+src/ant_coding.egg-info/requires.txt
+src/ant_coding.egg-info/top_level.txt
