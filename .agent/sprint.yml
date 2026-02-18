@@ -23,7 +23,7 @@ sprints:
             status: done
           - id: S1-E1-S05
             title: "Core Type Definitions"
-            status: not-started
+            status: in-progress
           - id: S1-E1-S06
             title: "Setup Script and Smoke Test"
             status: not-started
