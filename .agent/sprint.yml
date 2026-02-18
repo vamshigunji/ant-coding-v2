@@ -1,122 +1,591 @@
+# =============================================================================
+# ant-coding Sprint Tracker
+# =============================================================================
+# This file is the single source of truth for development progress.
+# The dev agent MUST update this file after completing each story.
+#
+# Status values:
+#   not-started  → Work has not begun
+#   in-progress  → Agent is actively working on this
+#   done         → Code merged to dev, tests passing
+#   review       → Epic complete, awaiting human review
+#
+# PRD+ Impact:
+#   Stories marked with (PRD+) are new or modified based on docs/prd-plus.md
+#   and docs/success-metrics.md. See Section 8 of prd-plus.md for mapping.
+#
+# The agent reads this file to know:
+#   1. What to work on next (first "not-started" story in current sprint)
+#   2. What's already done (avoid re-doing work)
+#   3. Where to find story details (file path)
+# =============================================================================
+
+project: ant-coding
 current_sprint: 3
 
-sprints:
-  1:
-    name: "Project Bootstrap & Configuration"
-    status: done
-    epics:
-      - id: S1-E1
-        title: "Project Scaffolding & Configuration"
-        status: review
-        stories:
-          - id: S1-E1-S01
-            title: "Initialize Python Project"
-            status: done
-          - id: S1-E1-S02
-            title: "Create Directory Structure"
-            status: done
-          - id: S1-E1-S03
-            title: "Environment Configuration"
-            status: done
-          - id: S1-E1-S04
-            title: "YAML Config Loader with Pydantic Validation"
-            status: done
-          - id: S1-E1-S05
-            title: "Core Type Definitions"
-            status: done
-          - id: S1-E1-S06
-            title: "Setup Script and Smoke Test"
-            status: done
+# =============================================================================
+# SPRINT 1: Project Bootstrap & Configuration
+# =============================================================================
+sprint_1:
+  name: "Project Bootstrap & Configuration"
+  goal: "Project skeleton, config system, type definitions. Foundation for all other layers."
+  status: done
 
-  2:
-    name: "Model & Memory Layers"
-    status: done
-    epics:
-      - id: S2-E1
-        title: "Model Layer Implementation"
-        status: review
-        stories:
-          - id: S2-E1-S01
-            title: "ModelConfig and ModelProvider Core"
-            status: done
-          - id: S2-E1-S02
-            title: "Token Budget Enforcement"
-            status: done
-          - id: S2-E1-S03
-            title: "ModelRegistry with YAML Loading"
-            status: done
-          - id: S2-E1-S04
-            title: "Model Layer Unit Tests"
-            status: done
-      - id: S2-E2
-        title: "Memory Layer Implementation"
-        status: review
-        stories:
-          - id: S2-E2-S01
-            title: "MemoryManager Base with Mode Enum"
-            status: done
-          - id: S2-E2-S02
-            title: "Shared Memory Implementation"
-            status: done
-          - id: S2-E2-S03
-            title: "Isolated Memory Implementation"
-            status: done
-          - id: S2-E2-S04
-            title: "Hybrid Memory Implementation"
-            status: done
-          - id: S2-E2-S05
-            title: "Memory Access Logging"
-            status: done
-          - id: S2-E2-S06
-            title: "Memory Config Loading"
-            status: done
-          - id: S2-E2-S07
-            title: "Memory Layer Unit Tests"
-            status: done
+  epics:
+    - id: S1-E1
+      name: "Project Scaffolding & Configuration"
+      file: stories_and_epics/Sprint-1-Epic-1.md
+      status: done
+      stories:
+        - id: S1-E1-S01
+          name: "Initialize Python Project"
+          branch: feature/S1-E1-S01
+          status: done
+          points: 2
 
-  3:
-    name: "Task & Agent Layers"
-    status: in-progress
-    epics:
-      - id: S3-E1
-        title: "Task Management"
-        status: review
-        stories:
-          - id: S3-E1-S01
-            title: "Custom YAML Task Loader"
-            status: done
-          - id: S3-E1-S02
-            title: "TaskWorkspace Setup and Teardown"
-            status: done
-          - id: S3-E1-S03
-            title: "SWE-bench Adapter"
-            status: done
-          - id: S3-E1-S04
-            title: "TaskLoader Unified Interface"
-            status: done
-          - id: S3-E1-S05
-            title: "Task Management Tests"
-            status: done
-      - id: S3-E2
-        title: "Tool Layer"
-        status: in-progress
-        stories:
-          - id: S3-E2-S01
-            title: "CodeExecutor with Sandboxing"
-            status: done
-          - id: S3-E2-S02
-            title: "FileOperations with Workspace Scoping"
-            status: done
-          - id: S3-E2-S03
-            title: "GitOperations"
-            status: in-progress
-          - id: S3-E2-S04
-            title: "CodebaseSearch"
-            status: not-started
-          - id: S3-E2-S05
-            title: "ToolRegistry"
-            status: not-started
-          - id: S3-E2-S06
-            title: "Tool Layer Tests"
-            status: not-started
+        - id: S1-E1-S02
+          name: "Create Directory Structure"
+          branch: feature/S1-E1-S02
+          status: done
+          points: 1
 
+        - id: S1-E1-S03
+          name: "Environment Configuration"
+          branch: feature/S1-E1-S03
+          status: done
+          points: 1
+
+        - id: S1-E1-S04
+          name: "YAML Config Loader with Pydantic Validation"
+          branch: feature/S1-E1-S04
+          status: done
+          points: 5
+
+        - id: S1-E1-S05
+          name: "Core Type Definitions"
+          branch: feature/S1-E1-S05
+          status: done
+          points: 5
+
+        - id: S1-E1-S06
+          name: "Setup Script and Smoke Test"
+          branch: feature/S1-E1-S06
+          status: done
+          points: 2
+
+# =============================================================================
+# SPRINT 2: Model & Memory Layers
+# =============================================================================
+sprint_2:
+  name: "Model & Memory Layers"
+  goal: "LiteLLM model abstraction and the memory system (shared/isolated/hybrid). The two foundational layers that orchestration depends on."
+  status: done
+
+  epics:
+    - id: S2-E1
+      name: "Model Abstraction Layer"
+      file: stories_and_epics/Sprint-2-Epic-1.md
+      status: done
+      stories:
+        - id: S2-E1-S01
+          name: "ModelConfig and ModelProvider Core"
+          branch: feature/S2-E1-S01
+          status: done
+          points: 5
+
+        - id: S2-E1-S02
+          name: "Token Budget Enforcement"
+          branch: feature/S2-E1-S02
+          status: done
+          points: 3
+
+        - id: S2-E1-S03
+          name: "ModelRegistry with YAML Loading"
+          branch: feature/S2-E1-S03
+          status: done
+          points: 3
+
+        - id: S2-E1-S04
+          name: "Model Layer Unit Tests"
+          branch: feature/S2-E1-S04
+          status: done
+          points: 3
+
+    - id: S2-E2
+      name: "Memory Layer"
+      file: stories_and_epics/Sprint-2-Epic-2.md
+      status: done
+      stories:
+        - id: S2-E2-S01
+          name: "MemoryManager Base with Mode Enum"
+          branch: feature/S2-E2-S01
+          status: done
+          points: 3
+
+        - id: S2-E2-S02
+          name: "Shared Memory Implementation"
+          branch: feature/S2-E2-S02
+          status: done
+          points: 3
+
+        - id: S2-E2-S03
+          name: "Isolated Memory Implementation"
+          branch: feature/S2-E2-S03
+          status: done
+          points: 3
+
+        - id: S2-E2-S04
+          name: "Hybrid Memory Implementation"
+          branch: feature/S2-E2-S04
+          status: done
+          points: 3
+
+        - id: S2-E2-S05
+          name: "Memory Access Logging"
+          branch: feature/S2-E2-S05
+          status: done
+          points: 2
+
+        - id: S2-E2-S06
+          name: "Memory Config Loading"
+          branch: feature/S2-E2-S06
+          status: done
+          points: 2
+
+        - id: S2-E2-S07
+          name: "Memory Layer Unit Tests"
+          branch: feature/S2-E2-S07
+          status: done
+          points: 3
+
+# =============================================================================
+# SPRINT 3: Tasks & Tools + PRD+ Type Extensions
+# =============================================================================
+sprint_3:
+  name: "Tasks, Tools & PRD+ Type Extensions"
+  goal: "Task loading (YAML + SWE-bench), workspace management, all tools (code exec, file ops, git, search), and PRD+ type/config updates."
+  status: in-progress
+
+  epics:
+    - id: S3-E1
+      name: "Task Management"
+      file: stories_and_epics/Sprint-3-Epic-1.md
+      status: done
+      stories:
+        - id: S3-E1-S01
+          name: "Custom YAML Task Loader"
+          branch: feature/S3-E1-S01
+          status: done
+          points: 3
+
+        - id: S3-E1-S02
+          name: "TaskWorkspace Setup and Teardown"
+          branch: feature/S3-E1-S02
+          status: done
+          points: 5
+
+        - id: S3-E1-S03
+          name: "SWE-bench Adapter"
+          branch: feature/S3-E1-S03
+          status: done
+          points: 5
+
+        - id: S3-E1-S04
+          name: "TaskLoader Unified Interface"
+          branch: feature/S3-E1-S04
+          status: done
+          points: 2
+
+        - id: S3-E1-S05
+          name: "Task Management Tests"
+          branch: feature/S3-E1-S05
+          status: done
+          points: 3
+
+    - id: S3-E2
+      name: "Tool Layer"
+      file: stories_and_epics/Sprint-3-Epic-2.md
+      status: in-progress
+      stories:
+        - id: S3-E2-S01
+          name: "CodeExecutor with Sandboxing"
+          branch: feature/S3-E2-S01
+          status: done
+          points: 5
+
+        - id: S3-E2-S02
+          name: "FileOperations with Workspace Scoping"
+          branch: feature/S3-E2-S02
+          status: done
+          points: 3
+
+        - id: S3-E2-S03
+          name: "GitOperations"
+          branch: feature/S3-E2-S03
+          status: done
+          points: 3
+
+        - id: S3-E2-S04
+          name: "CodebaseSearch"
+          branch: feature/S3-E2-S04
+          status: not-started
+          points: 3
+
+        - id: S3-E2-S05
+          name: "ToolRegistry"
+          branch: feature/S3-E2-S05
+          status: not-started
+          points: 2
+
+        - id: S3-E2-S06
+          name: "Tool Layer Tests"
+          branch: feature/S3-E2-S06
+          status: not-started
+          points: 3
+
+    # ── NEW EPIC (PRD+) ──
+    - id: S3-E3
+      name: "PRD+ Type & Config Updates"
+      file: stories_and_epics/Sprint-3-Epic-3.md
+      status: not-started
+      stories:
+        - id: S3-E3-S01
+          name: "Extend TaskResult with PRD+ Fields"
+          branch: feature/S3-E3-S01
+          status: not-started
+          points: 3
+          prd_plus: true
+
+        - id: S3-E3-S02
+          name: "Extend ExperimentMetrics with 4-Tier Fields"
+          branch: feature/S3-E3-S02
+          status: not-started
+          points: 3
+          prd_plus: true
+
+        - id: S3-E3-S03
+          name: "Add baseline_experiment_id to ExperimentConfig"
+          branch: feature/S3-E3-S03
+          status: not-started
+          points: 2
+          prd_plus: true
+
+        - id: S3-E3-S04
+          name: "PRD+ Type & Config Tests"
+          branch: feature/S3-E3-S04
+          status: not-started
+          points: 2
+          prd_plus: true
+
+# =============================================================================
+# SPRINT 4: Orchestration & Runner
+# =============================================================================
+sprint_4:
+  name: "Orchestration & Runner"
+  goal: "Plugin interface for orchestration patterns, reference implementations (including SingleAgent baseline from PRD+), and the experiment runner that wires everything together."
+  status: not-started
+
+  epics:
+    - id: S4-E1
+      name: "Orchestration Plugin Interface"
+      file: stories_and_epics/Sprint-4-Epic-1.md
+      status: not-started
+      stories:
+        - id: S4-E1-S01
+          name: "OrchestrationPattern Abstract Base Class"
+          branch: feature/S4-E1-S01
+          status: not-started
+          points: 3
+
+        - id: S4-E1-S02
+          name: "OrchestrationRegistry with Decorator"
+          branch: feature/S4-E1-S02
+          status: not-started
+          points: 2
+
+        - id: S4-E1-S03
+          name: "MinimalSequential Reference Implementation"
+          branch: feature/S4-E1-S03
+          status: not-started
+          points: 5
+
+        - id: S4-E1-S04
+          name: "SingleAgent Baseline (PRD+)"
+          branch: feature/S4-E1-S04
+          status: not-started
+          points: 5
+          prd_plus: true
+
+        - id: S4-E1-S05
+          name: "MinimalParallel and MinimalLoop References"
+          branch: feature/S4-E1-S05
+          status: not-started
+          points: 5
+
+        - id: S4-E1-S06
+          name: "Orchestration Tests"
+          branch: feature/S4-E1-S06
+          status: not-started
+          points: 3
+
+    - id: S4-E2
+      name: "Experiment Runner"
+      file: stories_and_epics/Sprint-4-Epic-2.md
+      status: not-started
+      stories:
+        - id: S4-E2-S01
+          name: "ExperimentRunner Core"
+          branch: feature/S4-E2-S01
+          status: not-started
+          points: 8
+
+        - id: S4-E2-S02
+          name: "Result Output Structure"
+          branch: feature/S4-E2-S02
+          status: not-started
+          points: 3
+
+        - id: S4-E2-S03
+          name: "CLI Entry Point"
+          branch: feature/S4-E2-S03
+          status: not-started
+          points: 2
+
+        - id: S4-E2-S04
+          name: "End-to-End Integration Test"
+          branch: feature/S4-E2-S04
+          status: not-started
+          points: 5
+
+# =============================================================================
+# SPRINT 5: Evaluation & Observability
+# =============================================================================
+sprint_5:
+  name: "Evaluation & Observability"
+  goal: "Event logging, 4-tier evaluation metrics (PRD+), updated LLM-as-Judge, failure classification, pass@k, statistical comparison with breakeven analysis."
+  status: not-started
+
+  epics:
+    - id: S5-E1
+      name: "Event Logger & Observability"
+      file: stories_and_epics/Sprint-5-Epic-1.md
+      status: not-started
+      stories:
+        - id: S5-E1-S01
+          name: "EventLogger with JSONL Output"
+          branch: feature/S5-E1-S01
+          status: not-started
+          points: 5
+
+        - id: S5-E1-S02
+          name: "Wire EventLogger into Runner and Layers"
+          branch: feature/S5-E1-S02
+          status: not-started
+          points: 5
+
+        - id: S5-E1-S03
+          name: "Latency Tracking"
+          branch: feature/S5-E1-S03
+          status: not-started
+          points: 2
+
+        - id: S5-E1-S04
+          name: "Observability Tests"
+          branch: feature/S5-E1-S04
+          status: not-started
+          points: 3
+
+    - id: S5-E2
+      name: "Evaluation Harness"
+      file: stories_and_epics/Sprint-5-Epic-2.md
+      status: not-started
+      stories:
+        - id: S5-E2-S01
+          name: "4-Tier Metrics Calculation (PRD+)"
+          branch: feature/S5-E2-S01
+          status: not-started
+          points: 8
+          prd_plus: true
+
+        - id: S5-E2-S02
+          name: "LLM-as-Judge Scoring (PRD+ Dimensions)"
+          branch: feature/S5-E2-S02
+          status: not-started
+          points: 5
+          prd_plus: true
+
+        - id: S5-E2-S03
+          name: "pass@k Computation"
+          branch: feature/S5-E2-S03
+          status: not-started
+          points: 3
+
+        - id: S5-E2-S04
+          name: "Failure Classification (PRD+)"
+          branch: feature/S5-E2-S04
+          status: not-started
+          points: 5
+          prd_plus: true
+
+        - id: S5-E2-S05
+          name: "Evaluation Tests"
+          branch: feature/S5-E2-S05
+          status: not-started
+          points: 3
+
+    - id: S5-E3
+      name: "Statistical Comparison"
+      file: stories_and_epics/Sprint-5-Epic-3.md
+      status: not-started
+      stories:
+        - id: S5-E3-S01
+          name: "Paired Statistical Tests and Breakeven Analysis (PRD+)"
+          branch: feature/S5-E3-S01
+          status: not-started
+          points: 5
+          prd_plus: true
+
+        - id: S5-E3-S02
+          name: "Bootstrap CI and Effect Size"
+          branch: feature/S5-E3-S02
+          status: not-started
+          points: 3
+
+        - id: S5-E3-S03
+          name: "Comparison Report with Recommendation"
+          branch: feature/S5-E3-S03
+          status: not-started
+          points: 3
+
+        - id: S5-E3-S04
+          name: "Statistical Tests Validation"
+          branch: feature/S5-E3-S04
+          status: not-started
+          points: 3
+
+# =============================================================================
+# SPRINT 6: Polish & Integration
+# =============================================================================
+sprint_6:
+  name: "Polish & Integration"
+  goal: "Reports, replay, experiment registry, MCP/A2A protocols, comprehensive tests, documentation. Production-ready framework."
+  status: not-started
+
+  epics:
+    - id: S6-E1
+      name: "Reports, Replay & Experiment Registry"
+      file: stories_and_epics/Sprint-6-Epic-1.md
+      status: not-started
+      stories:
+        - id: S6-E1-S01
+          name: "Markdown Report Generator"
+          branch: feature/S6-E1-S01
+          status: not-started
+          points: 3
+
+        - id: S6-E1-S02
+          name: "JSON and CSV Export"
+          branch: feature/S6-E1-S02
+          status: not-started
+          points: 2
+
+        - id: S6-E1-S03
+          name: "Session Replay"
+          branch: feature/S6-E1-S03
+          status: not-started
+          points: 5
+
+        - id: S6-E1-S04
+          name: "Cross-Experiment Comparison CLI"
+          branch: feature/S6-E1-S04
+          status: not-started
+          points: 3
+
+        - id: S6-E1-S05
+          name: "Experiment Registry Setup (PRD+)"
+          branch: feature/S6-E1-S05
+          status: not-started
+          points: 3
+          prd_plus: true
+
+        - id: S6-E1-S06
+          name: "Polish Tests"
+          branch: feature/S6-E1-S06
+          status: not-started
+          points: 2
+
+    - id: S6-E2
+      name: "Protocol Layer (MCP + A2A)"
+      file: stories_and_epics/Sprint-6-Epic-2.md
+      status: not-started
+      stories:
+        - id: S6-E2-S01
+          name: "MCP Tool Wrapping"
+          branch: feature/S6-E2-S01
+          status: not-started
+          points: 5
+
+        - id: S6-E2-S02
+          name: "A2A Agent Registration"
+          branch: feature/S6-E2-S02
+          status: not-started
+          points: 5
+
+        - id: S6-E2-S03
+          name: "Protocol Tests"
+          branch: feature/S6-E2-S03
+          status: not-started
+          points: 3
+
+    - id: S6-E3
+      name: "Comprehensive Tests & Documentation"
+      file: stories_and_epics/Sprint-6-Epic-3.md
+      status: not-started
+      stories:
+        - id: S6-E3-S01
+          name: "Full Pipeline Integration Test"
+          branch: feature/S6-E3-S01
+          status: not-started
+          points: 5
+
+        - id: S6-E3-S02
+          name: "Edge Case and Error Handling Tests"
+          branch: feature/S6-E3-S02
+          status: not-started
+          points: 3
+
+        - id: S6-E3-S03
+          name: "README and Developer Documentation"
+          branch: feature/S6-E3-S03
+          status: not-started
+          points: 3
+
+        - id: S6-E3-S04
+          name: "Linting and Code Quality"
+          branch: feature/S6-E3-S04
+          status: not-started
+          points: 2
+
+# =============================================================================
+# SUMMARY
+# =============================================================================
+# Total Sprints: 6
+# Total Epics: 12 (was 11, +1 new: S3-E3 PRD+ Types)
+# Total Stories: 60 (was 53, +7 new PRD+ stories)
+# Total Story Points: 213 (was 183, +30 from PRD+ additions)
+#
+# PRD+ New Stories (7):
+#   S3-E3-S01: Extend TaskResult with PRD+ Fields (3 pts)
+#   S3-E3-S02: Extend ExperimentMetrics with 4-Tier Fields (3 pts)
+#   S3-E3-S03: Add baseline_experiment_id to ExperimentConfig (2 pts)
+#   S3-E3-S04: PRD+ Type & Config Tests (2 pts)
+#   S4-E1-S04: SingleAgent Baseline (5 pts) — was generic, now specific
+#   S6-E1-S05: Experiment Registry Setup (3 pts) — new
+#   S6-E1-S06: Polish Tests (2 pts) — expanded scope
+#
+# PRD+ Modified Stories (existing stories with expanded scope):
+#   S5-E2-S01: Metrics Calculation → now 4-tier (8 pts, was 5)
+#   S5-E2-S02: LLM-as-Judge → updated dimensions (5 pts, unchanged)
+#   S5-E2-S04: Failure Classification → full FailureClassifier (5 pts, was 3)
+#   S5-E3-S01: Statistical Tests → includes breakeven analysis (5 pts, unchanged)
+# =============================================================================

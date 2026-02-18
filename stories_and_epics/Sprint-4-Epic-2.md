@@ -1,163 +1,267 @@
-# Sprint 4 — Epic 2: Experiment Runner
+# Sprint 4 — Epic 1: Orchestration Plugin Interface
 
-**Epic ID:** S4-E2  
+**Epic ID:** S4-E1  
 **Sprint:** 4  
 **Priority:** P1 — Core  
-**Goal:** Wire all layers together into the ExperimentRunner — the main entry point that takes a YAML config and produces structured results. After this epic, `python scripts/run_experiment.py config.yaml` runs end-to-end.
+**Goal:** Build the abstract base class, registry, and reference implementations for orchestration patterns. Includes the SingleAgent baseline (PRD+) as the control group for all multi-agent experiments. After this epic, new architectures can be created by subclassing `OrchestrationPattern` and registering with a decorator.
 
-**Dependencies:** S4-E1 (orchestration), S3-E1 (tasks), S3-E2 (tools), S2-E1 (models), S2-E2 (memory)
-
----
-
-## Story S4-E2-S01: ExperimentRunner Core
-
-**Branch:** `feature/S4-E2-S01`  
-**Points:** 8
-
-**Description:**  
-The central engine that loads config, initializes all layers, runs tasks through the orchestration pattern, and collects results.
-
-**Acceptance Criteria:**
-
-```gherkin
-Given a valid experiment config YAML
-When I create ExperimentRunner(config_path) 
-Then it loads and validates the config without errors
-And it initializes: ModelProvider, MemoryManager, TaskLoader
-
-Given an ExperimentRunner
-When I call await runner.run()
-Then it iterates over all tasks
-And for each task it calls: workspace.setup(), pattern.solve(), workspace.run_tests(), workspace.teardown()
-And it returns ExperimentMetrics with aggregated results
-
-Given an experiment with runs_per_task=3 and 2 tasks
-When runner.run() completes
-Then exactly 6 task runs are executed (2 tasks × 3 runs each)
-And results directory contains 6 task_result JSON files
-
-Given a task that exceeds timeout_per_task_seconds
-When the task is running
-Then it is terminated and recorded as errored (not failed)
-And the runner continues to the next task
-
-Given a task where the orchestration pattern raises an exception
-When the runner catches the error
-Then it records the task as errored with the error message
-And continues to the next task (no crash)
-```
-
-**Files to Create:**
-- `src/ant_coding/core/runner.py`
+**Dependencies:** S2-E1 (models), S2-E2 (memory), S3-E2 (tools)  
+**Reference:** `docs/prd.md` Section 7, `docs/prd-plus.md` Section 5
 
 ---
 
-## Story S4-E2-S02: Result Output Structure
+## Story S4-E1-S01: OrchestrationPattern Abstract Base Class
 
-**Branch:** `feature/S4-E2-S02`  
+**Branch:** `feature/S4-E1-S01`  
 **Points:** 3
 
+**Description:**  
+Create the ABC that all orchestration patterns must implement. This is the plugin contract — Vamshi implements subclasses, the framework calls `solve()`.
+
 **Acceptance Criteria:**
 
 ```gherkin
-Given an experiment with id="test-exp-001"
-When the runner completes
-Then the following directory structure exists:
-  results/test-exp-001/
-  ├── config.yaml        (copy of input config)
-  ├── metrics.json       (ExperimentMetrics as JSON)
-  ├── events.jsonl       (empty for now — populated in Sprint 5)
-  ├── task_results/
-  │   └── {task_id}-run-{n}.json
-  ├── patches/
-  │   └── {task_id}-run-{n}.patch
-  └── memory_logs/
-      └── {task_id}-access-log.json
+Given I subclass OrchestrationPattern without implementing solve()
+When I try to instantiate the subclass
+Then it raises TypeError (abstract method not implemented)
 
-Given a TaskResult with success=True and patch="diff content"
-When it is saved to task_results/
-Then the JSON file contains all TaskResult fields
-And the patch file contains the raw diff
+Given I subclass OrchestrationPattern and implement name(), description(), and solve()
+When I instantiate the subclass
+Then it succeeds and name() and description() return strings
 
-Given a MemoryManager access log for a task
-When the task completes
-Then memory_logs/{task_id}-access-log.json contains the full access log
+Given the OrchestrationPattern base class
+When I inspect its solve() signature
+Then it accepts: task (Task), model (ModelProvider), memory (MemoryManager), tools (dict), workspace_dir (str)
+And it returns TaskResult
+And it is an async method
+
+Given a concrete OrchestrationPattern
+When I call get_agent_definitions() without overriding
+Then it returns an empty list (default behavior)
 ```
 
 **Files to Create:**
-- `src/ant_coding/core/output.py`
+- `src/ant_coding/orchestration/base.py`
 
 ---
 
-## Story S4-E2-S03: CLI Entry Point
+## Story S4-E1-S02: OrchestrationRegistry with Decorator
 
-**Branch:** `feature/S4-E2-S03`  
+**Branch:** `feature/S4-E1-S02`  
 **Points:** 2
 
+**Description:**  
+Build a registry that allows patterns to be registered via decorator and retrieved by name.
+
 **Acceptance Criteria:**
 
 ```gherkin
-Given a valid experiment config YAML
-When I run `python scripts/run_experiment.py configs/experiments/baseline-sequential.yaml`
-Then it prints progress to console (task N/M, current status)
-And it creates the results directory with all outputs
-And exits with code 0
+Given a class decorated with @OrchestrationRegistry.register
+When I call OrchestrationRegistry.list_available()
+Then it includes the registered pattern's name
 
-Given an invalid config path
-When I run `python scripts/run_experiment.py nonexistent.yaml`
-Then it prints an error message and exits with code 1
+Given a registered pattern "minimal-sequential"
+When I call OrchestrationRegistry.get("minimal-sequential")
+Then it returns an instance of that pattern class
 
-Given multiple config paths
-When I run `python scripts/run_experiment.py config1.yaml config2.yaml`
-Then it runs both experiments sequentially
+Given no pattern registered with name "nonexistent"
+When I call OrchestrationRegistry.get("nonexistent")
+Then it raises PatternNotFoundError
+
+Given two patterns registered with the same name
+When the second registration happens
+Then it raises DuplicatePatternError
 ```
 
 **Files to Create:**
-- `scripts/run_experiment.py`
+- `src/ant_coding/orchestration/registry.py`
 
 ---
 
-## Story S4-E2-S04: End-to-End Integration Test
+## Story S4-E1-S03: MinimalSequential Reference Implementation
 
-**Branch:** `feature/S4-E2-S04`  
+**Branch:** `feature/S4-E1-S03`  
 **Points:** 5
 
 **Description:**  
-A full integration test with mocked model responses that validates the entire pipeline from config → execution → results.
+Build a working 2-agent sequential pipeline (Planner → Coder) that demonstrates the full plugin contract. This is the baseline multi-agent architecture all experiments compare against.
 
 **Acceptance Criteria:**
 
 ```gherkin
-Given a test experiment config using "minimal-sequential" pattern
-And a mocked ModelProvider that returns predetermined responses
-And a custom task YAML with 1 simple task
-When I run the ExperimentRunner end-to-end
-Then it completes without errors
-And results/test-experiment/metrics.json exists
-And metrics.json shows num_tasks=1 and total_tokens > 0
-And task_results/ contains exactly 1 JSON file (runs_per_task=1)
-And memory_logs/ contains the access log
+Given the MinimalSequential pattern
+When I call pattern.name()
+Then it returns "minimal-sequential"
 
-Given the integration test
-When I run `pytest tests/test_runner.py -v`
-Then it passes within 30 seconds (no real API calls)
+Given MinimalSequential with a mock model that returns predetermined responses
+When I call await pattern.solve(task, model, memory, tools, workspace_dir)
+Then it returns a TaskResult with:
+  - task_id matching the input task
+  - experiment_id == "minimal-sequential"
+  - total_tokens > 0
+
+Given MinimalSequential with SHARED memory
+When solve() executes
+Then the Planner agent writes "implementation_plan" to memory
+And the Coder agent reads "implementation_plan" from memory
+And the read returns the plan (shared mode)
+
+Given MinimalSequential with ISOLATED memory
+When solve() executes
+Then the Planner agent writes "implementation_plan" to memory
+And the Coder agent reads "implementation_plan" from memory
+And the read returns None (isolated mode — demonstrating the research variable)
+
+Given MinimalSequential with a model and working tools
+When solve() completes
+Then model.get_usage()["total_tokens"] > 0 (at least 2 LLM calls were made)
 ```
 
 **Files to Create:**
-- `tests/test_runner.py`
-- `tests/fixtures/mock_experiment.yaml`
-- `tests/fixtures/mock_tasks.yaml`
+- `src/ant_coding/orchestration/examples/sequential.py`
+
+---
+
+## Story S4-E1-S04: SingleAgent Baseline (PRD+)
+
+**Branch:** `feature/S4-E1-S04`  
+**Points:** 5
+
+**Description:**  
+Build the SingleAgent pattern — the control group for all multi-agent experiments. This establishes the performance floor and provides the denominator for `overhead_ratio` calculation. Every multi-agent experiment should reference a SingleAgent experiment via `baseline_experiment_id`.
+
+**Reference:** `docs/prd-plus.md` Section 5, `docs/success-metrics.md` Tier 2 (overhead_ratio)
+
+**Acceptance Criteria:**
+
+```gherkin
+Given the SingleAgent pattern
+When I call pattern.name()
+Then it returns "single-agent"
+
+Given SingleAgent is registered
+When I call OrchestrationRegistry.list_available()
+Then it includes "single-agent"
+
+Given SingleAgent with a mock model
+When I call await pattern.solve(task, model, memory, tools, workspace_dir)
+Then it returns a TaskResult with:
+  - task_id matching the input task
+  - total_tokens > 0 (exactly 1 LLM call in the simplest case)
+
+Given SingleAgent
+When I inspect get_agent_definitions()
+Then it returns [{"name": "SoloAgent", "role": "End-to-end task solver"}]
+
+Given SingleAgent
+When solve() executes
+Then it makes a SINGLE model.complete() call with task + tools
+And it executes any tool calls returned by the model
+And it runs tests via workspace
+And it returns the result
+
+Given SingleAgent with any memory mode
+When solve() executes
+Then memory writes happen for framework contract consistency
+But no inter-agent reads occur (there is only one agent)
+
+Given SingleAgent results and MinimalSequential results on the same tasks
+When overhead_ratio is calculated
+Then overhead_ratio = multi_agent_tokens / single_agent_tokens
+And this ratio is meaningful (typically 1.5x-3x)
+```
+
+**Files to Create:**
+- `src/ant_coding/orchestration/examples/single_agent.py`
+
+---
+
+## Story S4-E1-S05: MinimalParallel and MinimalLoop References
+
+**Branch:** `feature/S4-E1-S05`  
+**Points:** 5
+
+**Description:**  
+Build parallel (fan-out) and loop (iterative refinement) reference patterns.
+
+**Acceptance Criteria:**
+
+```gherkin
+Given the MinimalParallel pattern
+When I call pattern.name()
+Then it returns "minimal-parallel"
+And get_agent_definitions() returns at least 2 agents
+And the agents run concurrently (asyncio.gather)
+
+Given the MinimalLoop pattern
+When I call pattern.name()
+Then it returns "minimal-loop"
+And solve() iterates until tests pass or max iterations reached
+
+Given MinimalLoop with intermediate_test_results tracking
+When solve() runs 3 iterations: [fail, fail, pass]
+Then result.intermediate_test_results == [False, False, True]
+And result.success == True
+
+Given MinimalLoop with max_iterations=5 and all iterations fail
+When solve() completes
+Then result.intermediate_test_results has 5 entries, all False
+And result.success == False
+
+Given all patterns registered
+When I call OrchestrationRegistry.list_available()
+Then it includes "single-agent", "minimal-sequential", "minimal-parallel", "minimal-loop"
+```
+
+**Files to Create:**
+- `src/ant_coding/orchestration/examples/parallel.py`
+- `src/ant_coding/orchestration/examples/loop.py`
+
+---
+
+## Story S4-E1-S06: Orchestration Tests
+
+**Branch:** `feature/S4-E1-S06`  
+**Points:** 3
+
+**Description:**  
+Comprehensive tests for all orchestration components.
+
+**Acceptance Criteria:**
+
+```gherkin
+Given the test suite
+When I run `pytest tests/test_orchestration.py -v`
+Then all tests pass
+
+Given the test file
+Then there are at least 12 test cases covering:
+  - ABC enforcement (missing methods raises TypeError)
+  - Registry: register, get, list, duplicate rejection
+  - SingleAgent: full solve with mocked model
+  - MinimalSequential: full solve with mocked model
+  - MinimalSequential: shared vs isolated memory behavior difference
+  - MinimalParallel: concurrent execution
+  - MinimalLoop: iteration and termination
+  - MinimalLoop: intermediate_test_results tracking
+  - MinimalLoop: max iterations cap
+  - Pattern name uniqueness
+```
+
+**Files to Create:**
+- `tests/test_orchestration.py`
 
 ---
 
 ## Epic Completion Checklist
 
-- [ ] ExperimentRunner wires all layers and runs tasks end-to-end
-- [ ] Results directory has correct structure with config copy, metrics, task results, patches, memory logs
-- [ ] CLI entry point works with progress output
-- [ ] Integration test passes with mocked models
-- [ ] Error handling: timeout tasks and exceptions don't crash the runner
-- [ ] `pytest tests/test_runner.py` passes
+- [ ] OrchestrationPattern ABC enforces solve() implementation
+- [ ] OrchestrationRegistry supports decorator registration
+- [ ] SingleAgent baseline works end-to-end with mocked models (PRD+)
+- [ ] 3 multi-agent reference implementations work end-to-end
+- [ ] MinimalLoop tracks intermediate_test_results (PRD+)
+- [ ] Shared vs isolated memory produces different behavior in sequential pattern
+- [ ] `pytest tests/test_orchestration.py` passes
 - [ ] No linting errors
 - [ ] All stories have BRANCH_SUMMARY.md
 - [ ] sprint.yml updated

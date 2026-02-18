@@ -3,7 +3,7 @@
 **Epic ID:** S5-E1  
 **Sprint:** 5  
 **Priority:** P1 — Core  
-**Goal:** Build the immutable event logging system that records every LLM call, tool call, and memory access. After this epic, every experiment produces a complete JSONL event trace that can be replayed.
+**Goal:** Build the immutable event logging system that records every LLM call, tool call, and memory access. After this epic, every experiment produces a complete JSONL event trace.
 
 **Dependencies:** S4-E2 (runner — events are logged during execution)
 
@@ -30,10 +30,6 @@ Given an EventLogger with events from "planner" and "coder" agents
 When I call get_events(agent_name="planner")
 Then it returns only events from the planner agent
 
-Given an EventLogger with LLM_CALL and TOOL_CALL events
-When I call get_events(event_type=EventType.LLM_CALL)
-Then it returns only LLM_CALL events
-
 Given an EventLogger with multiple LLM_CALL events containing token data
 When I call get_token_breakdown()
 Then it returns a dict like:
@@ -42,7 +38,7 @@ And the totals are correct sums of individual call tokens
 ```
 
 **Files to Create:**
-- `src/ant_coding/observability/event_logger.py` (full implementation, replacing skeleton from S1-E1)
+- `src/ant_coding/observability/event_logger.py` (full implementation, replacing skeleton)
 
 ---
 
@@ -74,7 +70,8 @@ When a tool is invoked (e.g., file_ops.edit_file)
 Then a TOOL_CALL event is logged with: tool_name, method, args_summary, success
 
 Given an ExperimentRunner that completes a full task
-Then events.jsonl contains TASK_START, AGENT_START, LLM_CALL(s), TOOL_CALL(s), MEMORY_READ/WRITE(s), AGENT_END, TASK_END in chronological order
+Then events.jsonl contains TASK_START, AGENT_START, LLM_CALL(s), TOOL_CALL(s),
+  MEMORY_READ/WRITE(s), AGENT_END, TASK_END in chronological order
 ```
 
 **Files to Modify:**
@@ -104,11 +101,10 @@ Then it includes "duration_ms" with the tool execution time
 
 Given an EventLogger with completed task events
 When I calculate total wall time from TASK_START to TASK_END
-Then it matches the TaskResult.wall_time_seconds (within 100ms tolerance)
+Then it matches the TaskResult.duration_seconds (within 100ms tolerance)
 ```
 
-**Files to Modify:**
-- `src/ant_coding/observability/event_logger.py`
+**Files to Modify/Create:**
 - `src/ant_coding/observability/latency.py`
 
 ---
