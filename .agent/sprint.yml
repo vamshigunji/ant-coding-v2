@@ -93,7 +93,7 @@ sprints:
             status: done
           - id: S3-E1-S04
             title: "TaskLoader Unified Interface"
-            status: not-started
+            status: in-progress
           - id: S3-E1-S05
             title: "Task Management Tests"
             status: not-started
