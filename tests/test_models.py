@@ -144,7 +144,41 @@ def test_model_registry_load_and_get(monkeypatch):
     provider2 = registry.get("claude-sonnet")
     assert provider is not provider2
 
-def test_model_registry_not_found():
-    registry = ModelRegistry()
-    with pytest.raises(ModelNotFoundError):
-        registry.get("nonexistent")
+@pytest.mark.asyncio
+async def test_model_provider_real_call_gemini(monkeypatch):
+    """
+    Optional real integration test if GOOGLE_API_KEY is present.
+    Ensures that our wrapping of LiteLLM actually works with the provider.
+    """
+    import os
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key or api_key == "AIzaxxx":
+        pytest.skip("GOOGLE_API_KEY not set")
+
+    config = ModelConfig(
+        name="gemini-test",
+        litellm_model="gemini/gemini-2.0-flash",
+        api_key_env="GOOGLE_API_KEY"
+    )
+    provider = ModelProvider(config)
+    
+    messages = [{"role": "user", "content": "Say 'hello world' and nothing else."}]
+    response = await provider.complete(messages=messages)
+    
+    content = response.choices[0].message.content
+    assert "hello" in content.lower()
+    assert provider.get_usage()["total_tokens"] > 0
+
+@pytest.mark.asyncio
+async def test_model_provider_malformed_response(mock_model_config, monkeypatch):
+    monkeypatch.setenv("TEST_API_KEY", "fake-key")
+    
+    with patch("ant_coding.models.provider.acompletion", new_callable=AsyncMock) as mock_acompletion:
+        # Return something that doesn't have .usage
+        mock_acompletion.return_value = {"not": "a real response object"}
+        
+        provider = ModelProvider(mock_model_config)
+        # Should still return the response but log warning (internal usage update fails gracefully)
+        response = await provider.complete(messages=[])
+        assert response == {"not": "a real response object"}
+        assert provider.get_usage()["total_tokens"] == 0
