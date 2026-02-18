@@ -103,7 +103,7 @@ sprints:
         stories:
           - id: S3-E2-S01
             title: "CodeExecutor with Sandboxing"
-            status: in-progress
+            status: done
           - id: S3-E2-S02
             title: "FileOperations with Workspace Scoping"
             status: not-started
