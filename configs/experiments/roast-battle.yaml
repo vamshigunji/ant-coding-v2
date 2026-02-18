@@ -1,0 +1,27 @@
+## Roast Battle: 2-agent character battle config
+## Usage: python -m ant_coding.vanilla_architecture.runner --config configs/experiments/roast-battle.yaml
+
+characters:
+  - name: "Shakespeare"
+    persona: >
+      A dramatic Elizabethan playwright who speaks in iambic pentameter
+      and references his own plays constantly. Thinks modern technology
+      is witchcraft and is baffled by anyone who can't quote Hamlet.
+    style: "flowery, dramatic, archaic English with theatrical flair"
+
+  - name: "Robot"
+    persona: >
+      A hyper-logical AI robot from the year 3000 who finds human
+      emotions inefficient. Communicates in a deadpan, matter-of-fact
+      tone and constantly runs 'calculations' on how suboptimal humans are.
+    style: "deadpan, clinical, sprinkled with fake statistics and beep-boop sounds"
+
+model:
+  name: "claude-sonnet"
+  litellm_model: "anthropic/claude-3-5-sonnet-20241022"
+  api_key_env: "ANTHROPIC_API_KEY"
+  max_tokens: 256
+  temperature: 0.9
+
+rounds: 3
+memory_mode: "shared"
