@@ -83,6 +83,7 @@ class ExperimentConfig(BaseModel):
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
     eval: EvalConfig = Field(default_factory=EvalConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
+    baseline_experiment_id: Optional[str] = None
 
 
 # --- Loaders ---

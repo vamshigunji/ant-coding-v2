@@ -266,7 +266,7 @@ sprint_3:
         - id: S3-E3-S03
           name: "Add baseline_experiment_id to ExperimentConfig"
           branch: feature/S3-E3-S03
-          status: not-started
+          status: done
           points: 2
           prd_plus: true
 
