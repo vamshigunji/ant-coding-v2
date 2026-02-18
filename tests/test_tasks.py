@@ -1,8 +1,46 @@
 import pytest
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 from ant_coding.tasks.loader import TaskLoader, TaskLoadError
 from ant_coding.tasks.types import TaskSource, TaskDifficulty, Task
 from ant_coding.tasks.workspace import TaskWorkspace
+from ant_coding.tasks.swebench import load_swebench
+
+@pytest.mark.asyncio
+async def test_load_swebench_import_error(monkeypatch):
+    """Verify ImportError if datasets is missing."""
+    import sys
+    # Simulate missing 'datasets'
+    with patch.dict(sys.modules, {'datasets': None}):
+        with pytest.raises(ImportError) as excinfo:
+            load_swebench()
+        assert "pip install datasets" in str(excinfo.value)
+
+def test_load_swebench_mocked():
+    """Verify SWE-bench adapter mapping with mocked dataset."""
+    mock_item = {
+        "instance_id": "test-id",
+        "problem_statement": "Fix this",
+        "repo": "owner/repo",
+        "base_commit": "abc123",
+        "version": "1.0",
+        "test_patch": "diff --git ..."
+    }
+    
+    # Create a mock for the datasets module
+    mock_datasets = MagicMock()
+    mock_datasets.load_dataset.return_value = [mock_item]
+    
+    # Patch sys.modules to include our mock datasets
+    with patch.dict("sys.modules", {"datasets": mock_datasets}):
+        tasks = load_swebench(limit=1)
+    
+    assert len(tasks) == 1
+    task = tasks[0]
+    assert task.id == "test-id"
+    assert task.source == TaskSource.SWE_BENCH
+    assert task.metadata["base_commit"] == "abc123"
+    assert task.metadata["repo_url"] == "https://github.com/owner/repo"
 
 @pytest.mark.asyncio
 async def test_workspace_setup_teardown():
