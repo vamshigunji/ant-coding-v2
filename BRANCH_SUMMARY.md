@@ -1,25 +1,21 @@
-# Branch Summary: feature/S3-E1-S02
+# Branch Summary: feature/S3-E1-S03
 
 ## Story
-S3-E1-S02: TaskWorkspace Setup and Teardown
+S3-E1-S03: SWE-bench Adapter
 
 ## What Changed
-- Implemented `TaskWorkspace` class in `src/ant_coding/tasks/workspace.py`.
-- Added `setup()` method to create isolated temporary directories.
-- Integrated `gitpython` to handle repo cloning or fresh git initialization for custom tasks.
-- Implemented `get_patch()` using `git add` and `git diff` to generate standard patches for agent changes.
-- Implemented `run_command()` with `asyncio.create_subprocess_shell` for executing tests and other commands inside the workspace.
-- Added support for timeouts and combined stdout/stderr capture.
-- Added `teardown()` for recursive cleanup of workspace directories.
-- Expanded `tests/test_tasks.py` with workspace unit tests.
+- Implemented `load_swebench` in `src/ant_coding/tasks/swebench.py`.
+- Added support for loading tasks from Hugging Face Datasets (principally `SWE-bench_Lite` and `SWE-bench_Verified`).
+- Mapped SWE-bench instance fields to the unified `Task` dataclass.
+- Implemented graceful handling of missing dependencies (`datasets` and `swebench`).
+- Added unit tests with comprehensive mocking of the `datasets` library.
 
 ## Key Decisions
-- Defaulted base directory to `/tmp/ant-coding` for workspace isolation.
-- Used `git init` for custom tasks to enable unified patch generation even when a remote repo isn't provided.
-- Chose `asyncio` subprocess for command execution to maintain responsiveness in multi-agent orchestration.
+- Defaulted all SWE-bench tasks to `TaskDifficulty.HARD` and a higher token budget (200k) given their typical complexity.
+- Used `sys.modules` patching in tests to simulate the presence/absence of the `datasets` library without requiring it in the base environment.
 
 ## Files Touched
-- `src/ant_coding/tasks/workspace.py`
+- `src/ant_coding/tasks/swebench.py`
 - `tests/test_tasks.py`
 
 ## How to Verify
@@ -29,5 +25,5 @@ PYTHONPATH=src python3 -m pytest tests/test_tasks.py -v
 ```
 
 ## Notes for Reviewer
-- Workspace cleanup is handled by `teardown()`.
-- Command execution combines stdout and stderr into a single string for simplicity in agent context.
+- The adapter supports `split` and `subset` parameters to control which part of SWE-bench is loaded.
+- Real usage requires `pip install datasets`.
