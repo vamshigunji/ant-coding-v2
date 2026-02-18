@@ -247,7 +247,7 @@ sprint_3:
     - id: S3-E3
       name: "PRD+ Type & Config Updates"
       file: stories_and_epics/Sprint-3-Epic-3.md
-      status: not-started
+      status: review
       stories:
         - id: S3-E3-S01
           name: "Extend TaskResult with PRD+ Fields"
@@ -273,7 +273,7 @@ sprint_3:
         - id: S3-E3-S04
           name: "PRD+ Type & Config Tests"
           branch: feature/S3-E3-S04
-          status: not-started
+          status: done
           points: 2
           prd_plus: true
 

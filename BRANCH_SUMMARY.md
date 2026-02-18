@@ -1,27 +1,29 @@
-# Branch Summary: feature/S3-E2-S06
+# Branch Summary: feature/S3-E3-S04
 
 ## Story
-S3-E2-S06: Tool Layer Tests
+S3-E3-S04: PRD+ Type & Config Tests
 
 ## What Changed
-- Rewrote `tests/test_tools.py` with organized sections and 26 comprehensive test cases
-- Fixed duplicate test function from earlier stories
-- Added missing coverage: FileOps delete, FileOps read nonexistent, GitOps diff (separate), GitOps untracked, Search find_definition for functions
-- All tool categories well covered: CodeExecutor (5), FileOps (8), GitOps (4), Search (7), ToolRegistry (2)
+- Added 9 new PRD+ test cases across `tests/test_types.py` and `tests/test_config.py`
+- TaskResult tests: defaults, intermediate_test_results, judge_scores, failure_category
+- ExperimentMetrics tests: 4-tier defaults, failure_categories dict, instance independence
+- ExperimentConfig tests: baseline_experiment_id present and absent
 
 ## Key Decisions
-- Consolidated all tool tests in single file per epic specification
-- Added module-level docstring and section comments for organization
+- Tests verify backward compatibility (all 87 existing tests pass)
+- failure_categories independence test ensures no shared mutable default
 
 ## Files Touched
-- `tests/test_tools.py` (rewritten)
-- `.agent/sprint.yml` (status updates: S3-E2-S06 done, S3-E2 epic → review)
+- `tests/test_types.py` (modified — 7 new test functions)
+- `tests/test_config.py` (modified — 2 new test functions)
+- `.agent/sprint.yml` (S3-E3-S04 done, S3-E3 epic review)
 
 ## How to Verify
 ```bash
-pytest tests/test_tools.py -v
+pytest tests/test_types.py tests/test_config.py -v
+pytest tests/ -v  # full suite, zero regressions
 ```
 
 ## Notes for Reviewer
-- 26 tests, all passing. Exceeds the 15-test minimum from acceptance criteria.
-- Epic S3-E2 (Tool Layer) is now complete and marked for review.
+- Sprint 3 is now fully complete (all 3 epics in review/done).
+- 87 tests pass, 1 skipped (Gemini integration test).
