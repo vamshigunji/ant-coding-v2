@@ -10,16 +10,14 @@ Usage:
 import asyncio
 import argparse
 import logging
-import sys
+from datetime import datetime
 from pathlib import Path
 
 import yaml
 
-from ant_coding.core.config import ModelConfig, MemoryConfig, MemoryMode, get_env
-from ant_coding.models.provider import ModelProvider
-from ant_coding.memory.manager import MemoryManager
-from ant_coding.vanilla_architecture.agent import CharacterAgent, CharacterConfig
-from ant_coding.vanilla_architecture.orchestrator import RoastBattleOrchestrator
+from ant_coding.core.config import ModelConfig
+from ant_coding.vanilla_architecture.agent import CharacterConfig
+from ant_coding.vanilla_architecture.experiment_runner import ExperimentRunner
 
 # Default characters
 SHAKESPEARE = CharacterConfig(
@@ -59,28 +57,11 @@ def load_characters_from_config(path: str) -> tuple:
     return characters, model_cfg, rounds, memory_mode
 
 
-async def run_battle(
-    model_config: ModelConfig,
-    char_a: CharacterConfig,
-    char_b: CharacterConfig,
-    memory_mode: str = "shared",
-    rounds: int = 3,
-):
-    """Set up and run a roast battle."""
-    # Shared memory so both agents can see the full conversation state
-    memory = MemoryManager(MemoryConfig(mode=MemoryMode(memory_mode)))
+def _print_live_output(runner: ExperimentRunner):
+    """Print a live summary to stdout after the experiment completes."""
+    result = runner.result
+    metrics = runner.metrics
 
-    # Each agent gets its own ModelProvider instance for independent token tracking
-    model_a = ModelProvider(model_config)
-    model_b = ModelProvider(model_config)
-
-    agent_a = CharacterAgent(character=char_a, model=model_a, memory=memory)
-    agent_b = CharacterAgent(character=char_b, model=model_b, memory=memory)
-
-    orchestrator = RoastBattleOrchestrator(agent_a, agent_b)
-    result = await orchestrator.run(rounds=rounds)
-
-    # Print the conversation
     print("\n" + "=" * 60)
     print("  ROAST BATTLE TRANSCRIPT")
     print("=" * 60)
@@ -88,7 +69,6 @@ async def run_battle(
         print(f"\n[Turn {i}] {turn['speaker']}:")
         print(f"  {turn['text']}")
 
-    # Print token usage
     print("\n" + "-" * 60)
     print("  TOKEN USAGE")
     print("-" * 60)
@@ -100,20 +80,51 @@ async def run_battle(
             f"{usage['total_tokens']} total "
             f"(${usage['total_cost_usd']:.4f})"
         )
-    total_tokens = sum(u["total_tokens"] for u in result.usage.values())
-    total_cost = sum(u["total_cost_usd"] for u in result.usage.values())
-    print(f"  {'TOTAL':>10}: {total_tokens} tokens, ${total_cost:.4f}")
+    print(f"  {'TOTAL':>10}: {metrics.total_tokens} tokens, ${metrics.total_cost:.4f}")
     print("-" * 60)
 
-    # Show memory state
     print("\n  MEMORY STATE")
     print("-" * 60)
-    snapshot = memory.get_state_snapshot()
+    snapshot = runner.memory.get_state_snapshot()
     for key, value in snapshot.items():
         print(f"  {key}: {value[:80]}..." if len(str(value)) > 80 else f"  {key}: {value}")
     print("-" * 60)
 
-    return result
+    print(f"\n  Artifacts saved to: {runner.output_dir}/")
+    print(f"    - events.jsonl   (agent & LLM events)")
+    print(f"    - metrics.json   (ExperimentMetrics)")
+    print(f"    - memory_log.json (access log + final state)")
+    print(f"    - report.md      (full human-readable report)")
+    print("-" * 60)
+
+
+async def run_experiment(
+    model_config: ModelConfig,
+    char_a: CharacterConfig,
+    char_b: CharacterConfig,
+    memory_mode: str = "shared",
+    rounds: int = 3,
+    output_dir: str = "results",
+    experiment_id: str = None,
+):
+    """Set up and run a full experiment with persistence."""
+    if experiment_id is None:
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        experiment_id = f"roast-battle-{timestamp}"
+
+    runner = ExperimentRunner(
+        experiment_id=experiment_id,
+        model_config=model_config,
+        char_a=char_a,
+        char_b=char_b,
+        memory_mode=memory_mode,
+        rounds=rounds,
+        output_dir=output_dir,
+    )
+
+    metrics = await runner.run()
+    _print_live_output(runner)
+    return metrics
 
 
 def main():
@@ -123,6 +134,8 @@ def main():
     parser.add_argument("--model", type=str, default="claude-sonnet", help="Model name")
     parser.add_argument("--memory", type=str, default="shared", choices=["shared", "isolated", "hybrid"],
                         help="Memory mode (default: shared)")
+    parser.add_argument("--output-dir", type=str, default="results", help="Output directory (default: results)")
+    parser.add_argument("--experiment-id", type=str, default=None, help="Experiment ID (auto-generated if omitted)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
 
@@ -138,25 +151,26 @@ def main():
         rounds = args.rounds or rounds
         memory_mode = args.memory or memory_mode
     else:
-        # Use defaults
         char_a, char_b = SHAKESPEARE, ROBOT
         rounds = args.rounds
         memory_mode = args.memory
 
-        # Load model config from configs/ directory
         model_path = Path("configs/models") / f"{args.model}.yaml"
         if model_path.exists():
             with open(model_path) as f:
                 model_config = ModelConfig(**yaml.safe_load(f))
         else:
-            # Fallback: construct a minimal config
             model_config = ModelConfig(
                 name=args.model,
-                litellm_model=f"anthropic/claude-3-5-sonnet-20241022",
+                litellm_model="anthropic/claude-sonnet-4-5-20250929",
                 api_key_env="ANTHROPIC_API_KEY",
             )
 
-    asyncio.run(run_battle(model_config, char_a, char_b, memory_mode, rounds))
+    asyncio.run(run_experiment(
+        model_config, char_a, char_b, memory_mode, rounds,
+        output_dir=args.output_dir,
+        experiment_id=args.experiment_id,
+    ))
 
 
 if __name__ == "__main__":

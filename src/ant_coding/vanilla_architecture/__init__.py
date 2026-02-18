@@ -5,3 +5,4 @@ with character-driven agents that converse via shared memory.
 
 from ant_coding.vanilla_architecture.agent import CharacterAgent
 from ant_coding.vanilla_architecture.orchestrator import RoastBattleOrchestrator
+from ant_coding.vanilla_architecture.experiment_runner import ExperimentRunner
