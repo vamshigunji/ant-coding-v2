@@ -1,21 +1,22 @@
-# Branch Summary: feature/S2-E1-S02
+# Branch Summary: feature/S2-E1-S03
 
 ## Story
-S2-E1-S02: Token Budget Enforcement
+S2-E1-S03: ModelRegistry with YAML Loading
 
 ## What Changed
-- Added `TokenBudgetExceeded` custom exception in `src/ant_coding/models/provider.py`.
-- Updated `ModelProvider` to accept an optional `token_budget`.
-- Implemented pre-call and post-call token budget checks.
-- Ensured that `TokenBudgetExceeded` exceptions do not trigger retries.
-- Added unit tests for budget enforcement in `tests/test_models.py`.
+- Implemented `ModelRegistry` class in `src/ant_coding/models/registry.py`.
+- Added `load_from_yaml` method to bulk load configurations from a directory.
+- Added `get` method to instantiate a fresh `ModelProvider` from a registered config.
+- Added `list_available` method to see registered model names.
+- Added `ModelNotFoundError` exception.
+- Added unit tests for registry functionality in `tests/test_models.py`.
 
 ## Key Decisions
-- Placed the budget check both before the call (to avoid unnecessary API calls) and after the usage update (to catch budget violations from the latest call).
-- Ensured `TokenBudgetExceeded` is a subclass of `ModelError` for consistent exception hierarchy.
+- Registry returns a *new* instance of `ModelProvider` on every `get()` call to ensure token counters and usage tracking are fresh and independent per usage context.
+- Gracefully skips malformed YAML files during bulk load to prevent a single bad file from breaking the registry initialization.
 
 ## Files Touched
-- `src/ant_coding/models/provider.py`
+- `src/ant_coding/models/registry.py`
 - `tests/test_models.py`
 
 ## How to Verify
@@ -25,4 +26,4 @@ PYTHONPATH=src python3 -m pytest tests/test_models.py -v
 ```
 
 ## Notes for Reviewer
-- The `TokenBudgetExceeded` exception provides detailed information about current usage, the budget limit, and the tokens used in the last call.
+- The registry expects YAML files to be in the format validated by `ModelConfig`.

@@ -3,6 +3,7 @@ import asyncio
 from unittest.mock import AsyncMock, patch, MagicMock
 from ant_coding.core.config import ModelConfig
 from ant_coding.models.provider import ModelProvider, ModelError, TokenBudgetExceeded
+from ant_coding.models.registry import ModelRegistry, ModelNotFoundError
 
 @pytest.fixture
 def mock_model_config():
@@ -121,3 +122,29 @@ async def test_model_provider_pre_call_budget_check(mock_model_config, monkeypat
     with pytest.raises(TokenBudgetExceeded) as excinfo:
         await provider.complete(messages=[])
     assert excinfo.value.current_tokens == 60
+
+def test_model_registry_load_and_get(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "fake")
+    monkeypatch.setenv("OPENAI_API_KEY", "fake")
+    monkeypatch.setenv("GOOGLE_API_KEY", "fake")
+    
+    registry = ModelRegistry()
+    registry.load_from_yaml("configs/models/")
+    
+    available = registry.list_available()
+    assert "claude-sonnet" in available
+    assert "gpt-4o" in available
+    assert "gemini-flash" in available
+    
+    provider = registry.get("claude-sonnet")
+    assert isinstance(provider, ModelProvider)
+    assert provider.config.name == "claude-sonnet"
+    
+    # Verify fresh instance
+    provider2 = registry.get("claude-sonnet")
+    assert provider is not provider2
+
+def test_model_registry_not_found():
+    registry = ModelRegistry()
+    with pytest.raises(ModelNotFoundError):
+        registry.get("nonexistent")
