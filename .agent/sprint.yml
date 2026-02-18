@@ -1,0 +1,41 @@
+current_sprint: 1
+
+sprints:
+  1:
+    name: "Project Bootstrap & Configuration"
+    status: in-progress
+    epics:
+      - id: S1-E1
+        title: "Project Scaffolding & Configuration"
+        status: in-progress
+        stories:
+          - id: S1-E1-S01
+            title: "Initialize Python Project"
+            status: not-started
+          - id: S1-E1-S02
+            title: "Create Directory Structure"
+            status: not-started
+          - id: S1-E1-S03
+            title: "Environment Configuration"
+            status: not-started
+          - id: S1-E1-S04
+            title: "YAML Config Loader with Pydantic Validation"
+            status: not-started
+          - id: S1-E1-S05
+            title: "Core Type Definitions"
+            status: not-started
+          - id: S1-E1-S06
+            title: "Setup Script and Smoke Test"
+            status: not-started
+
+  2:
+    name: "Model & Memory Layers"
+    status: not-started
+    epics:
+      - id: S2-E1
+        title: "Model Layer Implementation"
+        status: not-started
+      - id: S2-E2
+        title: "Memory Layer Implementation"
+        status: not-started
+
