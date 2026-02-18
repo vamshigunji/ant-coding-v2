@@ -109,7 +109,7 @@ sprints:
             status: done
           - id: S3-E2-S03
             title: "GitOperations"
-            status: not-started
+            status: in-progress
           - id: S3-E2-S04
             title: "CodebaseSearch"
             status: not-started
