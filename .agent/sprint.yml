@@ -84,7 +84,7 @@ sprints:
         stories:
           - id: S3-E1-S01
             title: "Custom YAML Task Loader"
-            status: in-progress
+            status: done
           - id: S3-E1-S02
             title: "TaskWorkspace Setup and Teardown"
             status: not-started
