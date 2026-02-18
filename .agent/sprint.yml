@@ -75,24 +75,27 @@ sprints:
             status: done
 
   3:
-    name: "Agent & Tool Layers"
+    name: "Task & Agent Layers"
     status: in-progress
     epics:
       - id: S3-E1
-        title: "Tool Execution Layer"
+        title: "Task Management"
         status: in-progress
         stories:
           - id: S3-E1-S01
-            title: "BaseTool and ToolRegistry"
-            status: not-started
+            title: "Custom YAML Task Loader"
+            status: in-progress
           - id: S3-E1-S02
-            title: "FileSystem Tools"
+            title: "TaskWorkspace Setup and Teardown"
             status: not-started
           - id: S3-E1-S03
-            title: "Shell Execution Tool"
+            title: "SWE-bench Adapter"
             status: not-started
           - id: S3-E1-S04
-            title: "Tool Output Formatting"
+            title: "TaskLoader Unified Interface"
+            status: not-started
+          - id: S3-E1-S05
+            title: "Task Management Tests"
             status: not-started
       - id: S3-E2
         title: "Agent Layer Implementation"
