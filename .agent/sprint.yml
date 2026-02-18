@@ -1,9 +1,9 @@
-current_sprint: 1
+current_sprint: 3
 
 sprints:
   1:
     name: "Project Bootstrap & Configuration"
-    status: in-progress
+    status: done
     epics:
       - id: S1-E1
         title: "Project Scaffolding & Configuration"
@@ -30,7 +30,7 @@ sprints:
 
   2:
     name: "Model & Memory Layers"
-    status: in-progress
+    status: done
     epics:
       - id: S2-E1
         title: "Model Layer Implementation"
@@ -73,4 +73,38 @@ sprints:
           - id: S2-E2-S07
             title: "Memory Layer Unit Tests"
             status: done
+
+  3:
+    name: "Agent & Tool Layers"
+    status: in-progress
+    epics:
+      - id: S3-E1
+        title: "Tool Execution Layer"
+        status: in-progress
+        stories:
+          - id: S3-E1-S01
+            title: "BaseTool and ToolRegistry"
+            status: not-started
+          - id: S3-E1-S02
+            title: "FileSystem Tools"
+            status: not-started
+          - id: S3-E1-S03
+            title: "Shell Execution Tool"
+            status: not-started
+          - id: S3-E1-S04
+            title: "Tool Output Formatting"
+            status: not-started
+      - id: S3-E2
+        title: "Agent Layer Implementation"
+        status: not-started
+        stories:
+          - id: S3-E2-S01
+            title: "BaseAgent with Memory & Model integration"
+            status: not-started
+          - id: S3-E2-S02
+            title: "Tool-using Agent (LiteLLM Tool Calling)"
+            status: not-started
+          - id: S3-E2-S03
+            title: "Agent Prompt Templates"
+            status: not-started
 
