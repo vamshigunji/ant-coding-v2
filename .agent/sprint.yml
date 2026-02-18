@@ -87,7 +87,7 @@ sprints:
             status: done
           - id: S3-E1-S02
             title: "TaskWorkspace Setup and Teardown"
-            status: not-started
+            status: in-progress
           - id: S3-E1-S03
             title: "SWE-bench Adapter"
             status: not-started
