@@ -4,6 +4,7 @@ from ant_coding.tools.code_executor import CodeExecutor
 from ant_coding.tools.file_ops import FileOperations, SecurityError
 from ant_coding.tools.git_ops import GitOperations
 from ant_coding.tools.search import CodebaseSearch
+from ant_coding.tools.registry import ToolRegistry
 
 @pytest.fixture
 def temp_workspace(tmp_path):
@@ -247,3 +248,31 @@ def test_search_skips_binary_files(tmp_path):
 
     assert len(results) == 1
     assert results[0]["file"] == "code.py"
+
+
+# ── ToolRegistry Tests ──
+
+def test_tool_registry_initialization(tmp_path):
+    ws = tmp_path / "reg_ws"
+    ws.mkdir()
+
+    registry = ToolRegistry(ws)
+
+    assert isinstance(registry.code_executor, CodeExecutor)
+    assert isinstance(registry.file_ops, FileOperations)
+    assert isinstance(registry.git_ops, GitOperations)
+    assert isinstance(registry.search, CodebaseSearch)
+
+
+def test_tool_registry_as_dict(tmp_path):
+    ws = tmp_path / "reg_ws2"
+    ws.mkdir()
+
+    registry = ToolRegistry(ws)
+    d = registry.as_dict()
+
+    assert set(d.keys()) == {"code_executor", "file_ops", "git_ops", "search"}
+    assert d["code_executor"] is registry.code_executor
+    assert d["file_ops"] is registry.file_ops
+    assert d["git_ops"] is registry.git_ops
+    assert d["search"] is registry.search

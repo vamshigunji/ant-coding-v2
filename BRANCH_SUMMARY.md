@@ -1,31 +1,26 @@
-# Branch Summary: feature/S3-E2-S04
+# Branch Summary: feature/S3-E2-S05
 
 ## Story
-S3-E2-S04: CodebaseSearch
+S3-E2-S05: ToolRegistry
 
 ## What Changed
-- Added `CodebaseSearch` class with `grep`, `find_definition`, and `find_references` methods
-- Regex-based pattern matching with fallback to literal search for invalid regex
-- Language-aware definition patterns for Python, JavaScript, and TypeScript
-- Binary file and hidden directory filtering
-- Word-boundary matching for references, excluding definition lines
-- Added 7 test cases to `tests/test_tools.py`
+- Added `ToolRegistry` class that wires all tools (CodeExecutor, FileOperations, GitOperations, CodebaseSearch) together
+- `as_dict()` method returns all tool instances keyed by name
+- Added 2 test cases to `tests/test_tools.py`
 
 ## Key Decisions
-- Used regex patterns per file extension (`.py`, `.js`, `.ts`) for `find_definition` rather than AST parsing — simpler and sufficient for the benchmarking use case
-- `find_references` excludes definition lines to avoid double-counting
-- Skips hidden directories (`.git`, `.venv`, etc.) and binary file extensions
+- ToolRegistry accepts optional `code_timeout` parameter for CodeExecutor configuration
+- All workspace-scoped tools share the same `workspace_dir`
 
 ## Files Touched
-- `src/ant_coding/tools/search.py` (new)
-- `tests/test_tools.py` (modified — added search tests)
+- `src/ant_coding/tools/registry.py` (new)
+- `tests/test_tools.py` (modified — added registry tests)
 - `.agent/sprint.yml` (status update)
 
 ## How to Verify
 ```bash
-pytest tests/test_tools.py -v -k "search"
+pytest tests/test_tools.py -v -k "registry"
 ```
 
 ## Notes for Reviewer
-- The definition patterns cover Python/JS/TS. Additional languages can be added to `_DEFINITION_PATTERNS` as needed.
-- No external dependencies added — uses stdlib `re`, `pathlib` only.
+- Simple wiring class. Could be extended with tool configuration from experiment config in future sprints.
