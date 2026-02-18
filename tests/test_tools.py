@@ -3,6 +3,7 @@ import asyncio
 from ant_coding.tools.code_executor import CodeExecutor
 from ant_coding.tools.file_ops import FileOperations, SecurityError
 from ant_coding.tools.git_ops import GitOperations
+from ant_coding.tools.search import CodebaseSearch
 
 @pytest.fixture
 def temp_workspace(tmp_path):
@@ -128,6 +129,121 @@ async def test_run_command_success():
 async def test_run_command_failure():
     executor = CodeExecutor()
     result = await executor.run_command("ls nonexistent_file_xyz")
-    
+
     assert result["success"] is False
     assert result["exit_code"] != 0
+
+
+# ── CodebaseSearch Tests ──
+
+@pytest.fixture
+def search_workspace(tmp_path):
+    """Create a workspace with Python files for search testing."""
+    ws = tmp_path / "search_ws"
+    ws.mkdir()
+
+    # src/models.py — has a class definition
+    src = ws / "src"
+    src.mkdir()
+    (src / "models.py").write_text(
+        "class UserManager:\n"
+        "    def __init__(self):\n"
+        "        pass\n"
+        "\n"
+        "    def get_user(self, user_id):\n"
+        "        return None\n"
+        "\n"
+        "def calculate(x, y):\n"
+        "    return x + y\n"
+    )
+
+    # src/views.py — imports and uses UserManager
+    (src / "views.py").write_text(
+        "from models import UserManager\n"
+        "\n"
+        "manager = UserManager()\n"
+        "result = manager.get_user(1)\n"
+    )
+
+    # src/utils.py — also references UserManager
+    (src / "utils.py").write_text(
+        "from models import UserManager\n"
+        "\n"
+        "def create_manager() -> UserManager:\n"
+        "    return UserManager()\n"
+    )
+
+    # tests/test_models.py — imports UserManager for testing
+    tests = ws / "tests"
+    tests.mkdir()
+    (tests / "test_models.py").write_text(
+        "from src.models import UserManager\n"
+        "\n"
+        "def test_user_manager():\n"
+        "    mgr = UserManager()\n"
+        "    assert mgr is not None\n"
+    )
+
+    return ws
+
+
+def test_search_grep_basic(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.grep("def calculate", path="src/")
+
+    assert len(results) >= 1
+    assert any(
+        r["file"] == "src/models.py" and "def calculate" in r["line_content"]
+        for r in results
+    )
+
+
+def test_search_grep_regex(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.grep(r"def \w+\(self", path="src/")
+
+    # Should match __init__ and get_user
+    assert len(results) >= 2
+
+
+def test_search_find_definition(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.find_definition("UserManager")
+
+    assert len(results) >= 1
+    assert any(
+        r["file"] == "src/models.py" and "class UserManager" in r["line_content"]
+        for r in results
+    )
+
+
+def test_search_find_references(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.find_references("UserManager")
+
+    # UserManager is imported/used in views.py, utils.py, and tests/test_models.py
+    assert len(results) >= 3
+
+    referenced_files = {r["file"] for r in results}
+    assert "src/views.py" in referenced_files
+    assert "src/utils.py" in referenced_files
+
+
+def test_search_grep_no_matches(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.grep("nonexistent_pattern_xyz")
+
+    assert results == []
+
+
+def test_search_skips_binary_files(tmp_path):
+    ws = tmp_path / "bin_ws"
+    ws.mkdir()
+    (ws / "image.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+    (ws / "code.py").write_text("def hello(): pass\n")
+
+    search = CodebaseSearch(ws)
+    results = search.grep("hello")
+
+    assert len(results) == 1
+    assert results[0]["file"] == "code.py"

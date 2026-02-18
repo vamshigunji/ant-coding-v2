@@ -228,7 +228,7 @@ sprint_3:
         - id: S3-E2-S04
           name: "CodebaseSearch"
           branch: feature/S3-E2-S04
-          status: not-started
+          status: in-progress
           points: 3
 
         - id: S3-E2-S05
