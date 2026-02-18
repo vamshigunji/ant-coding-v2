@@ -30,12 +30,22 @@ sprints:
 
   2:
     name: "Model & Memory Layers"
-    status: not-started
+    status: in-progress
     epics:
       - id: S2-E1
         title: "Model Layer Implementation"
-        status: not-started
-      - id: S2-E2
-        title: "Memory Layer Implementation"
-        status: not-started
+        status: in-progress
+        stories:
+          - id: S2-E1-S01
+            title: "ModelConfig and ModelProvider Core"
+            status: in-progress
+          - id: S2-E1-S02
+            title: "Token Budget Enforcement"
+            status: not-started
+          - id: S2-E1-S03
+            title: "ModelRegistry with YAML Loading"
+            status: not-started
+          - id: S2-E1-S04
+            title: "Model Layer Unit Tests"
+            status: not-started
 
