@@ -1,38 +1,30 @@
-# Branch Summary: feature/S1-E1-S04
+# Branch Summary: feature/S1-E1-S05
 
 ## Story
-S1-E1-S04: YAML Config Loader with Pydantic Validation
+S1-E1-S05: Core Type Definitions
 
 ## What Changed
-- Implemented Pydantic models for `ModelConfig`, `MemoryConfig`, `TasksConfig`, `ExecutionConfig`, `EvalConfig`, `OutputConfig`, and `ExperimentConfig`.
-- Developed `load_model_config`, `load_memory_config`, and `load_experiment_config` functions in `src/ant_coding/core/config.py`.
-- Added support for resolving nested configs in `load_experiment_config` from string identifiers (e.g., resolving `model: "claude-sonnet"` to `configs/models/claude-sonnet.yaml`).
-- Created default configuration files in `configs/models/` and `configs/memory/`.
-- Created a baseline experiment config in `configs/experiments/baseline-sequential.yaml`.
-- Added unit tests for the configuration system in `tests/test_config.py`.
+- Defined `Task`, `TaskResult`, `TaskSource`, and `TaskDifficulty` in `src/ant_coding/tasks/types.py`.
+- Defined `Event` and `EventType` in `src/ant_coding/observability/event_logger.py`.
+- Defined `ExperimentMetrics` in `src/ant_coding/eval/metrics.py`.
+- Added unit tests for these types in `tests/test_types.py`.
 
 ## Key Decisions
-- Used `Union[str, ModelConfig]` in `ExperimentConfig` to allow both inline config and file-based references.
-- Centralized YAML loading and error handling in a private helper `_load_yaml`.
-- Followed the PRD Section 12.2 schema for all config models.
+- Used Python `dataclasses` for data objects to keep them lightweight and focused on state.
+- Used `Enum` for fixed sets of values (like `EventType`, `TaskSource`) to ensure type safety.
+- Provided sensible defaults for all numeric and collection fields in dataclasses.
 
 ## Files Touched
-- `src/ant_coding/core/config.py`
-- `configs/models/claude-sonnet.yaml`
-- `configs/models/gpt-4o.yaml`
-- `configs/models/gemini-flash.yaml`
-- `configs/memory/shared.yaml`
-- `configs/memory/isolated.yaml`
-- `configs/memory/hybrid.yaml`
-- `configs/experiments/baseline-sequential.yaml`
-- `tests/test_config.py`
+- `src/ant_coding/tasks/types.py`
+- `src/ant_coding/observability/event_logger.py`
+- `src/ant_coding/eval/metrics.py`
+- `tests/test_types.py`
 
 ## How to Verify
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python3 -m pytest tests/test_config.py -v
+PYTHONPATH=src python3 -m pytest tests/test_types.py -v
 ```
 
 ## Notes for Reviewer
-- The config system correctly validates mandatory fields and enum values (like `MemoryMode`).
-- Resolving nested configs assumes they live in `configs/models/` and `configs/memory/`.
+- All types are currently importable and behave as expected according to the PRD requirements.
