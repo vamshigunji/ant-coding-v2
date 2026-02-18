@@ -2,9 +2,51 @@ import pytest
 import asyncio
 from ant_coding.tools.code_executor import CodeExecutor
 from ant_coding.tools.file_ops import FileOperations, SecurityError
+from ant_coding.tools.git_ops import GitOperations
 
 @pytest.fixture
 def temp_workspace(tmp_path):
+    ws = tmp_path / "workspace"
+    ws.mkdir()
+    return ws
+
+@pytest.fixture
+def git_workspace(temp_workspace):
+    from git import Repo
+    Repo.init(temp_workspace)
+    return temp_workspace
+
+def test_git_ops_status_and_commit(git_workspace):
+    git = GitOperations(git_workspace)
+    
+    # Create and add a file
+    test_file = git_workspace / "test.txt"
+    test_file.write_text("initial")
+    git.add("test.txt")
+    
+    status = git.get_status()
+    assert any(s["file"] == "test.txt" and s["status"] == "staged" for s in status)
+    
+    commit_hash = git.commit("initial commit")
+    assert len(commit_hash) == 40
+    
+    # Modify and check diff
+    test_file.write_text("modified")
+    diff = git.get_diff(staged=False)
+    assert "modified" in diff
+
+def test_git_ops_branch(git_workspace):
+    git = GitOperations(git_workspace)
+    # Need at least one commit before branching
+    test_file = git_workspace / "init.txt"
+    test_file.write_text("init")
+    git.add(".")
+    git.commit("init")
+    
+    git.create_branch("feature/test")
+    assert git.repo.active_branch.name == "feature/test"
+
+def test_file_ops_write_read(temp_workspace):
     ws = tmp_path / "workspace"
     ws.mkdir()
     return ws
