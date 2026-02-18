@@ -1,32 +1,30 @@
-# Branch Summary: feature/S2-E2-S01
+# Branch Summary: feature/S3-E1-S01
 
 ## Story
-S2-E2-S01: MemoryManager Base with Mode Enum
+S3-E1-S01: Custom YAML Task Loader
 
 ## What Changed
-- Implemented `MemoryManager` class in `src/ant_coding/memory/manager.py`.
-- Defined internal `_resolve_key` logic to handle shared, isolated, and hybrid memory prefixes.
-- Implemented `read`, `write`, and `list_keys` with mode-aware routing.
-- Integrated access logging for all memory operations.
-- Added support for state snapshots and resetting state.
-- Integrated with `MemoryConfig` from the core config system.
-- Added comprehensive unit tests for all memory modes in `tests/test_memory.py`.
+- Implemented `TaskLoader` class in `src/ant_coding/tasks/loader.py`.
+- Added `load_custom` method to load and validate tasks from YAML files.
+- Added support for mapping string difficulty values to `TaskDifficulty` enum.
+- Captured extra fields in YAML (like `test_command`) into the `Task.metadata` dictionary.
+- Created an example task file in `tasks/custom/example-task.yaml`.
+- Added unit tests for custom task loading in `tests/test_tasks.py`.
 
 ## Key Decisions
-- Used `app:` prefix for shared/global keys and `temp:{agent_id}:` for isolated/private keys.
-- Implemented `list_keys` to dynamically filter visible keys based on the current agent's identity and the memory mode.
-- Access logging records the `resolved_key` to allow developers to see exactly where data was stored or retrieved from.
+- Placed any non-standard task fields into the `metadata` dictionary to keep the `Task` dataclass clean while remaining flexible.
+- Implemented a unified `load_from_config` entry point that will eventually route between custom and SWE-bench loaders.
 
 ## Files Touched
-- `src/ant_coding/memory/manager.py`
-- `tests/test_memory.py`
+- `src/ant_coding/tasks/loader.py`
+- `tasks/custom/example-task.yaml`
+- `tests/test_tasks.py`
 
 ## How to Verify
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python3 -m pytest tests/test_memory.py -v
+PYTHONPATH=src python3 -m pytest tests/test_tasks.py -v
 ```
 
 ## Notes for Reviewer
-- This implementation covers stories S2-E2-S01 through S2-E2-S05 as the logic is deeply intertwined.
-- The manager is ready for integration with the agent layer.
+- The `load_from_config` method currently uses the `subset` field of `TasksConfig` as the file path when the source is `custom`.

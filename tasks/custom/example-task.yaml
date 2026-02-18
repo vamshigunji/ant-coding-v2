@@ -1,0 +1,13 @@
+tasks:
+  - id: "fix-auth-bug"
+    description: "Fix the authentication bypass in login.py"
+    files_context: ["src/auth/login.py"]
+    test_command: "pytest tests/test_auth.py -v"
+    difficulty: "medium"
+    timeout_seconds: 300
+  - id: "optimize-query"
+    description: "Optimize the slow database query in db.py"
+    files_context: ["src/db.py"]
+    test_command: "python benchmark.py"
+    difficulty: "hard"
+    timeout_seconds: 600
