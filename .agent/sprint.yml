@@ -98,16 +98,25 @@ sprints:
             title: "Task Management Tests"
             status: done
       - id: S3-E2
-        title: "Agent Layer Implementation"
-        status: not-started
+        title: "Tool Layer"
+        status: in-progress
         stories:
           - id: S3-E2-S01
-            title: "BaseAgent with Memory & Model integration"
-            status: not-started
+            title: "CodeExecutor with Sandboxing"
+            status: in-progress
           - id: S3-E2-S02
-            title: "Tool-using Agent (LiteLLM Tool Calling)"
+            title: "FileOperations with Workspace Scoping"
             status: not-started
           - id: S3-E2-S03
-            title: "Agent Prompt Templates"
+            title: "GitOperations"
+            status: not-started
+          - id: S3-E2-S04
+            title: "CodebaseSearch"
+            status: not-started
+          - id: S3-E2-S05
+            title: "ToolRegistry"
+            status: not-started
+          - id: S3-E2-S06
+            title: "Tool Layer Tests"
             status: not-started
 
