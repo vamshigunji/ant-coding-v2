@@ -106,7 +106,7 @@ sprints:
             status: done
           - id: S3-E2-S02
             title: "FileOperations with Workspace Scoping"
-            status: in-progress
+            status: done
           - id: S3-E2-S03
             title: "GitOperations"
             status: not-started
