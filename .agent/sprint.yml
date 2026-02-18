@@ -14,7 +14,7 @@ sprints:
             status: done
           - id: S1-E1-S02
             title: "Create Directory Structure"
-            status: not-started
+            status: in-progress
           - id: S1-E1-S03
             title: "Environment Configuration"
             status: not-started
