@@ -48,4 +48,29 @@ sprints:
           - id: S2-E1-S04
             title: "Model Layer Unit Tests"
             status: done
+      - id: S2-E2
+        title: "Memory Layer Implementation"
+        status: in-progress
+        stories:
+          - id: S2-E2-S01
+            title: "MemoryManager Base with Mode Enum"
+            status: in-progress
+          - id: S2-E2-S02
+            title: "Shared Memory Implementation"
+            status: not-started
+          - id: S2-E2-S03
+            title: "Isolated Memory Implementation"
+            status: not-started
+          - id: S2-E2-S04
+            title: "Hybrid Memory Implementation"
+            status: not-started
+          - id: S2-E2-S05
+            title: "Memory Access Logging"
+            status: not-started
+          - id: S2-E2-S06
+            title: "Memory Config Loading"
+            status: not-started
+          - id: S2-E2-S07
+            title: "Memory Layer Unit Tests"
+            status: not-started
 
