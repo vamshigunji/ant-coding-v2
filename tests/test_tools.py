@@ -1,3 +1,7 @@
+"""
+Comprehensive tests for the ant-coding tool layer.
+"""
+
 import pytest
 import asyncio
 from ant_coding.tools.code_executor import CodeExecutor
@@ -6,125 +10,63 @@ from ant_coding.tools.git_ops import GitOperations
 from ant_coding.tools.search import CodebaseSearch
 from ant_coding.tools.registry import ToolRegistry
 
+
 @pytest.fixture
 def temp_workspace(tmp_path):
     ws = tmp_path / "workspace"
     ws.mkdir()
     return ws
 
+
 @pytest.fixture
 def git_workspace(temp_workspace):
     from git import Repo
+
     Repo.init(temp_workspace)
     return temp_workspace
 
-def test_git_ops_status_and_commit(git_workspace):
-    git = GitOperations(git_workspace)
-    
-    # Create and add a file
-    test_file = git_workspace / "test.txt"
-    test_file.write_text("initial")
-    git.add("test.txt")
-    
-    status = git.get_status()
-    assert any(s["file"] == "test.txt" and s["status"] == "staged" for s in status)
-    
-    commit_hash = git.commit("initial commit")
-    assert len(commit_hash) == 40
-    
-    # Modify and check diff
-    test_file.write_text("modified")
-    diff = git.get_diff(staged=False)
-    assert "modified" in diff
 
-def test_git_ops_branch(git_workspace):
-    git = GitOperations(git_workspace)
-    # Need at least one commit before branching
-    test_file = git_workspace / "init.txt"
-    test_file.write_text("init")
-    git.add(".")
-    git.commit("init")
-    
-    git.create_branch("feature/test")
-    assert git.repo.active_branch.name == "feature/test"
+# ── CodeExecutor Tests ──
 
-def test_file_ops_write_read(temp_workspace):
-    ws = tmp_path / "workspace"
-    ws.mkdir()
-    return ws
-
-def test_file_ops_write_read(temp_workspace):
-    ops = FileOperations(temp_workspace)
-    ops.write_file("src/main.py", "print('hello')")
-    
-    assert (temp_workspace / "src/main.py").exists()
-    assert ops.read_file("src/main.py") == "print('hello')"
-
-def test_file_ops_edit(temp_workspace):
-    ops = FileOperations(temp_workspace)
-    ops.write_file("app.py", "def old(): pass")
-    
-    success = ops.edit_file("app.py", "old()", "new()")
-    assert success is True
-    assert "def new()" in ops.read_file("app.py")
-    
-    success = ops.edit_file("app.py", "nonexistent", "new")
-    assert success is False
-
-def test_file_ops_security(temp_workspace):
-    ops = FileOperations(temp_workspace)
-    with pytest.raises(SecurityError):
-        ops.read_file("../../../etc/passwd")
-
-def test_file_ops_list_and_search(temp_workspace):
-    ops = FileOperations(temp_workspace)
-    ops.write_file("src/a.py", "TODO: fix this")
-    ops.write_file("src/b.py", "no tasks here")
-    ops.write_file("tests/test.py", "TODO: add tests")
-    
-    files = ops.list_files("**/*.py")
-    assert "src/a.py" in files
-    assert "tests/test.py" in files
-    
-    results = ops.search_files("TODO")
-    assert len(results) == 2
-    assert results[0]["file"] == "src/a.py"
-    assert results[1]["file"] == "tests/test.py"
 
 @pytest.mark.asyncio
 async def test_execute_python_success():
     executor = CodeExecutor()
     result = await executor.execute("print('hello world')")
-    
+
     assert result["success"] is True
     assert result["stdout"].strip() == "hello world"
     assert result["exit_code"] == 0
+
 
 @pytest.mark.asyncio
 async def test_execute_python_error():
     executor = CodeExecutor()
     result = await executor.execute("raise ValueError('oops')")
-    
+
     assert result["success"] is False
     assert "ValueError: oops" in result["stderr"]
     assert result["exit_code"] != 0
+
 
 @pytest.mark.asyncio
 async def test_execute_timeout():
     executor = CodeExecutor(timeout=1)
     result = await executor.execute("import time; time.sleep(5)")
-    
+
     assert result["success"] is False
     assert "timed out" in result["stderr"]
     assert result["exit_code"] == -1
+
 
 @pytest.mark.asyncio
 async def test_run_command_success():
     executor = CodeExecutor()
     result = await executor.run_command("echo 'it works'")
-    
+
     assert result["success"] is True
     assert result["stdout"].strip() == "it works"
+
 
 @pytest.mark.asyncio
 async def test_run_command_failure():
@@ -135,7 +77,131 @@ async def test_run_command_failure():
     assert result["exit_code"] != 0
 
 
+# ── FileOperations Tests ──
+
+
+def test_file_ops_write_and_read(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("src/main.py", "print('hello')")
+
+    assert (temp_workspace / "src/main.py").exists()
+    assert ops.read_file("src/main.py") == "print('hello')"
+
+
+def test_file_ops_read_nonexistent(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    with pytest.raises(FileNotFoundError):
+        ops.read_file("does_not_exist.py")
+
+
+def test_file_ops_edit_success(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("app.py", "def old_function(): pass")
+
+    success = ops.edit_file("app.py", "old_function()", "new_function()")
+    assert success is True
+    assert "def new_function()" in ops.read_file("app.py")
+
+
+def test_file_ops_edit_no_match(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("app.py", "def hello(): pass")
+
+    success = ops.edit_file("app.py", "nonexistent", "replacement")
+    assert success is False
+
+
+def test_file_ops_path_traversal_blocked(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    with pytest.raises(SecurityError):
+        ops.read_file("../../etc/passwd")
+
+
+def test_file_ops_list_files(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("src/a.py", "# a")
+    ops.write_file("src/b.py", "# b")
+    ops.write_file("tests/test_a.py", "# test")
+
+    files = ops.list_files("**/*.py")
+    assert "src/a.py" in files
+    assert "src/b.py" in files
+    assert "tests/test_a.py" in files
+
+
+def test_file_ops_search_files(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("src/a.py", "# TODO: fix this\nclean line\n")
+    ops.write_file("src/b.py", "no tasks here\n")
+    ops.write_file("tests/test.py", "# TODO: add tests\n")
+
+    results = ops.search_files("TODO")
+    assert len(results) == 2
+    assert results[0]["file"] == "src/a.py"
+    assert results[0]["line_number"] == 1
+    assert results[1]["file"] == "tests/test.py"
+
+
+def test_file_ops_delete(temp_workspace):
+    ops = FileOperations(temp_workspace)
+    ops.write_file("temp.py", "delete me")
+    assert (temp_workspace / "temp.py").exists()
+
+    ops.delete_file("temp.py")
+    assert not (temp_workspace / "temp.py").exists()
+
+
+# ── GitOperations Tests ──
+
+
+def test_git_ops_status_and_commit(git_workspace):
+    git = GitOperations(git_workspace)
+
+    test_file = git_workspace / "test.txt"
+    test_file.write_text("initial")
+    git.add("test.txt")
+
+    status = git.get_status()
+    assert any(s["file"] == "test.txt" and s["status"] == "staged" for s in status)
+
+    commit_hash = git.commit("initial commit")
+    assert len(commit_hash) == 40
+
+
+def test_git_ops_diff(git_workspace):
+    git = GitOperations(git_workspace)
+
+    test_file = git_workspace / "test.txt"
+    test_file.write_text("initial")
+    git.add(".")
+    git.commit("init")
+
+    test_file.write_text("modified content")
+    diff = git.get_diff(staged=False)
+    assert "modified content" in diff
+
+
+def test_git_ops_branch(git_workspace):
+    git = GitOperations(git_workspace)
+    test_file = git_workspace / "init.txt"
+    test_file.write_text("init")
+    git.add(".")
+    git.commit("init")
+
+    git.create_branch("feature/test")
+    assert git.repo.active_branch.name == "feature/test"
+
+
+def test_git_ops_untracked_file(git_workspace):
+    git = GitOperations(git_workspace)
+
+    (git_workspace / "new_file.txt").write_text("new")
+    status = git.get_status()
+    assert any(s["file"] == "new_file.txt" and s["status"] == "untracked" for s in status)
+
+
 # ── CodebaseSearch Tests ──
+
 
 @pytest.fixture
 def search_workspace(tmp_path):
@@ -143,7 +209,6 @@ def search_workspace(tmp_path):
     ws = tmp_path / "search_ws"
     ws.mkdir()
 
-    # src/models.py — has a class definition
     src = ws / "src"
     src.mkdir()
     (src / "models.py").write_text(
@@ -158,7 +223,6 @@ def search_workspace(tmp_path):
         "    return x + y\n"
     )
 
-    # src/views.py — imports and uses UserManager
     (src / "views.py").write_text(
         "from models import UserManager\n"
         "\n"
@@ -166,7 +230,6 @@ def search_workspace(tmp_path):
         "result = manager.get_user(1)\n"
     )
 
-    # src/utils.py — also references UserManager
     (src / "utils.py").write_text(
         "from models import UserManager\n"
         "\n"
@@ -174,7 +237,6 @@ def search_workspace(tmp_path):
         "    return UserManager()\n"
     )
 
-    # tests/test_models.py — imports UserManager for testing
     tests = ws / "tests"
     tests.mkdir()
     (tests / "test_models.py").write_text(
@@ -218,6 +280,17 @@ def test_search_find_definition(search_workspace):
     )
 
 
+def test_search_find_definition_function(search_workspace):
+    search = CodebaseSearch(search_workspace)
+    results = search.find_definition("calculate")
+
+    assert len(results) >= 1
+    assert any(
+        r["file"] == "src/models.py" and "def calculate" in r["line_content"]
+        for r in results
+    )
+
+
 def test_search_find_references(search_workspace):
     search = CodebaseSearch(search_workspace)
     results = search.find_references("UserManager")
@@ -233,7 +306,6 @@ def test_search_find_references(search_workspace):
 def test_search_grep_no_matches(search_workspace):
     search = CodebaseSearch(search_workspace)
     results = search.grep("nonexistent_pattern_xyz")
-
     assert results == []
 
 
@@ -251,6 +323,7 @@ def test_search_skips_binary_files(tmp_path):
 
 
 # ── ToolRegistry Tests ──
+
 
 def test_tool_registry_initialization(tmp_path):
     ws = tmp_path / "reg_ws"
