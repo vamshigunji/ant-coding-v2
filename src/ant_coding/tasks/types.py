@@ -6,15 +6,18 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Dict, Any, Optional
 
+
 class TaskSource(str, Enum):
     SWE_BENCH = "swe-bench"
     CUSTOM = "custom"
     GAIA = "gaia"
 
+
 class TaskDifficulty(str, Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+
 
 @dataclass
 class Task:
@@ -26,6 +29,7 @@ class Task:
     timeout_seconds: int = 600
     files_context: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class TaskResult:

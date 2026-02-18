@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+
 class EventType(str, Enum):
     AGENT_START = "agent_start"
     AGENT_END = "agent_end"
@@ -17,6 +18,7 @@ class EventType(str, Enum):
     ERROR = "error"
     TASK_START = "task_start"
     TASK_END = "task_end"
+
 
 @dataclass
 class Event:
