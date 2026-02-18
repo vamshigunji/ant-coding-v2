@@ -20,7 +20,7 @@ sprints:
             status: done
           - id: S1-E1-S04
             title: "YAML Config Loader with Pydantic Validation"
-            status: in-progress
+            status: done
           - id: S1-E1-S05
             title: "Core Type Definitions"
             status: not-started
