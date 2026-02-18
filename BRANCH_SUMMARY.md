@@ -1,31 +1,30 @@
-# Branch Summary: feature/S3-E1-S05
+# Branch Summary: feature/S3-E2-S01
 
 ## Story
-S3-E1-S05: Task Management Tests
+S3-E2-S01: CodeExecutor with Sandboxing
 
 ## What Changed
-- Verified full test coverage for the task management layer.
-- Ensured all 11 test cases in `tests/test_tasks.py` are passing.
-- Validated:
-    - Custom YAML task loading with metadata capture.
-    - Error handling for missing fields and files.
-    - Isolated workspace setup and teardown.
-    - Git patch generation for workspace changes.
-    - Command execution inside the workspace.
-    - SWE-bench adapter mapping and dataset mocking.
-    - Unified TaskLoader dispatch based on configuration.
+- Implemented `CodeExecutor` class in `src/ant_coding/tools/code_executor.py`.
+- Added `execute()` method for running Python code blocks with output capture.
+- Added `run_command()` method for executing arbitrary shell commands.
+- Implemented timeout logic using `asyncio.wait_for` to prevent runaway processes.
+- Added support for custom working directories.
+- Created `tests/test_tools.py` with initial unit tests for code execution.
 
 ## Key Decisions
-- Maintained a high level of isolation in tests by mocking external dependencies like `datasets` and using temporary directories for workspaces.
+- Used `asyncio.create_subprocess_shell` to ensure non-blocking execution during multi-agent orchestration.
+- Implemented temporary file creation for code execution to avoid polluting the workspace with script files.
+- Captured both stdout and stderr independently for better debugging.
 
 ## Files Touched
-- `tests/test_tasks.py` (final verification)
+- `src/ant_coding/tools/code_executor.py`
+- `tests/test_tools.py`
 
 ## How to Verify
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python3 -m pytest tests/test_tasks.py -v
+PYTHONPATH=src python3 -m pytest tests/test_tools.py -v
 ```
 
 ## Notes for Reviewer
-- All acceptance criteria for the Task Management epic have been met and verified by tests.
+- The "sandboxing" is currently process-level isolation and timeout enforcement. More advanced container-based sandboxing could be added in the future if required.
