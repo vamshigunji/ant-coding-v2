@@ -6,6 +6,7 @@ import yaml
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union
 from ant_coding.tasks.types import Task, TaskSource, TaskDifficulty
+from ant_coding.tasks.swebench import load_swebench
 from ant_coding.core.config import TasksConfig
 
 class TaskLoadError(Exception):
@@ -91,13 +92,14 @@ class TaskLoader:
             A list of Task objects.
         """
         if config.source == "custom":
-            # Assuming custom_path is in metadata or we need to add it to TasksConfig
-            # For now, we'll check if custom_path is in metadata or use a default
+            # In custom mode, subset is used as the path to the YAML file
             custom_path = config.subset or "tasks/custom/example-task.yaml"
             return self.load_custom(custom_path)
             
         if config.source == "swe-bench":
-             # Placeholder for story S3-E1-S03
-             raise NotImplementedError("SWE-bench loader not yet implemented")
+             # Map TasksConfig fields to load_swebench parameters
+             # We can use metadata for 'split' or default to 'lite'
+             split = config.subset or "lite"
+             return load_swebench(split=split, limit=config.limit)
              
         raise TaskLoadError(f"Unsupported task source: {config.source}")

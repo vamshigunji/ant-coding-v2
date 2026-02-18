@@ -6,6 +6,34 @@ from ant_coding.tasks.types import TaskSource, TaskDifficulty, Task
 from ant_coding.tasks.workspace import TaskWorkspace
 from ant_coding.tasks.swebench import load_swebench
 
+from ant_coding.core.config import TasksConfig
+
+def test_loader_from_config_custom():
+    config = TasksConfig(source="custom", subset="tasks/custom/example-task.yaml")
+    loader = TaskLoader()
+    tasks = loader.load_from_config(config)
+    assert len(tasks) == 2
+    assert tasks[0].source == TaskSource.CUSTOM
+
+def test_loader_from_config_swebench():
+    config = TasksConfig(source="swe-bench", subset="lite", limit=5)
+    loader = TaskLoader()
+    
+    mock_datasets = MagicMock()
+    mock_datasets.load_dataset.return_value = [{"instance_id": f"id-{i}", "problem_statement": "p", "repo": "r", "base_commit": "c", "version": "v", "test_patch": "t"} for i in range(5)]
+    
+    with patch.dict("sys.modules", {"datasets": mock_datasets}):
+        tasks = loader.load_from_config(config)
+    
+    assert len(tasks) == 5
+    assert tasks[0].source == TaskSource.SWE_BENCH
+
+def test_loader_from_config_invalid():
+    config = TasksConfig(source="invalid")
+    loader = TaskLoader()
+    with pytest.raises(TaskLoadError):
+        loader.load_from_config(config)
+
 @pytest.mark.asyncio
 async def test_load_swebench_import_error(monkeypatch):
     """Verify ImportError if datasets is missing."""
