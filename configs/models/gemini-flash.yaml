@@ -1,5 +1,5 @@
 name: "gemini-flash"
-litellm_model: "google/gemini-2.0-flash"
+litellm_model: "gemini/gemini-2.0-flash"
 api_key_env: "GOOGLE_API_KEY"
 max_tokens: 8192
 temperature: 0.0
