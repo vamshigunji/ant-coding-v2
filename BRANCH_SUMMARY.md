@@ -1,23 +1,25 @@
-# Branch Summary: feature/S3-E1-S01
+# Branch Summary: feature/S3-E1-S02
 
 ## Story
-S3-E1-S01: Custom YAML Task Loader
+S3-E1-S02: TaskWorkspace Setup and Teardown
 
 ## What Changed
-- Implemented `TaskLoader` class in `src/ant_coding/tasks/loader.py`.
-- Added `load_custom` method to load and validate tasks from YAML files.
-- Added support for mapping string difficulty values to `TaskDifficulty` enum.
-- Captured extra fields in YAML (like `test_command`) into the `Task.metadata` dictionary.
-- Created an example task file in `tasks/custom/example-task.yaml`.
-- Added unit tests for custom task loading in `tests/test_tasks.py`.
+- Implemented `TaskWorkspace` class in `src/ant_coding/tasks/workspace.py`.
+- Added `setup()` method to create isolated temporary directories.
+- Integrated `gitpython` to handle repo cloning or fresh git initialization for custom tasks.
+- Implemented `get_patch()` using `git add` and `git diff` to generate standard patches for agent changes.
+- Implemented `run_command()` with `asyncio.create_subprocess_shell` for executing tests and other commands inside the workspace.
+- Added support for timeouts and combined stdout/stderr capture.
+- Added `teardown()` for recursive cleanup of workspace directories.
+- Expanded `tests/test_tasks.py` with workspace unit tests.
 
 ## Key Decisions
-- Placed any non-standard task fields into the `metadata` dictionary to keep the `Task` dataclass clean while remaining flexible.
-- Implemented a unified `load_from_config` entry point that will eventually route between custom and SWE-bench loaders.
+- Defaulted base directory to `/tmp/ant-coding` for workspace isolation.
+- Used `git init` for custom tasks to enable unified patch generation even when a remote repo isn't provided.
+- Chose `asyncio` subprocess for command execution to maintain responsiveness in multi-agent orchestration.
 
 ## Files Touched
-- `src/ant_coding/tasks/loader.py`
-- `tasks/custom/example-task.yaml`
+- `src/ant_coding/tasks/workspace.py`
 - `tests/test_tasks.py`
 
 ## How to Verify
@@ -27,4 +29,5 @@ PYTHONPATH=src python3 -m pytest tests/test_tasks.py -v
 ```
 
 ## Notes for Reviewer
-- The `load_from_config` method currently uses the `subset` field of `TasksConfig` as the file path when the source is `custom`.
+- Workspace cleanup is handled by `teardown()`.
+- Command execution combines stdout and stderr into a single string for simplicity in agent context.
