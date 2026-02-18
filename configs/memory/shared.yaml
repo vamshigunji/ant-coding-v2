@@ -1,0 +1,2 @@
+mode: "shared"
+shared_keys: ["implementation_plan", "test_results", "workspace_summary"]

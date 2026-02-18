@@ -1,0 +1,14 @@
+name: "baseline-sequential"
+model: "claude-sonnet"
+memory: "shared"
+tasks:
+  source: "swe-bench"
+  subset: "verified"
+  limit: 10
+execution:
+  max_workers: 1
+  timeout_seconds: 3600
+eval:
+  metrics: ["pass@1"]
+output:
+  dir: "results/baseline"
