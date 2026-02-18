@@ -15,15 +15,27 @@ class ModelError(Exception):
     """Exception raised for model-related errors."""
     pass
 
+class TokenBudgetExceeded(ModelError):
+    """Exception raised when the token budget is exceeded."""
+    def __init__(self, current_tokens: int, budget_limit: int, last_call_tokens: int = 0):
+        self.current_tokens = current_tokens
+        self.budget_limit = budget_limit
+        self.last_call_tokens = last_call_tokens
+        super().__init__(
+            f"Token budget exceeded: {current_tokens} > {budget_limit} "
+            f"(last call used {last_call_tokens} tokens)"
+        )
+
 class ModelProvider:
     """
     Provider for LLM completions using LiteLLM.
     Handles unified interface, retries, and token/cost tracking.
     """
     
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ModelConfig, token_budget: Optional[int] = None):
         self.config = config
         self.api_key = get_env(config.api_key_env)
+        self.token_budget = token_budget
         
         # Usage tracking
         self.prompt_tokens = 0
@@ -50,8 +62,12 @@ class ModelProvider:
             The raw response from LiteLLM.
             
         Raises:
+            TokenBudgetExceeded: If the budget is already exceeded or hit.
             ModelError: If the call fails after retries.
         """
+        if self.token_budget is not None and self.get_total_tokens() >= self.token_budget:
+            raise TokenBudgetExceeded(self.get_total_tokens(), self.token_budget)
+
         params = {
             "model": self.config.litellm_model,
             "messages": messages,
@@ -69,6 +85,9 @@ class ModelProvider:
                 response = await acompletion(**params)
                 self._update_usage(response)
                 return response
+            except TokenBudgetExceeded:
+                # Don't retry budget exceeded
+                raise
             except Exception as e:
                 # LiteLLM raises various exceptions for transient errors
                 # (RateLimitError, ServiceUnavailableError, etc.)
@@ -88,24 +107,33 @@ class ModelProvider:
             self.completion_tokens += usage.completion_tokens
             
             # Calculate cost
-            # cost = model_cost.get(self.config.litellm_model, {}).get("cost_per_token", 0) * usage.total_tokens
-            # LiteLLM provides completion_cost helper
             try:
                 cost = litellm.completion_cost(completion_response=response)
                 if cost:
                     self.total_cost += float(cost)
             except:
-                # Fallback or ignore if cost calculation fails
                 pass
+
+            # Budget enforcement after update
+            if self.token_budget is not None and self.get_total_tokens() > self.token_budget:
+                raise TokenBudgetExceeded(
+                    self.get_total_tokens(), 
+                    self.token_budget, 
+                    usage.total_tokens
+                )
         except AttributeError:
             logger.warning("Response missing usage information")
+
+    def get_total_tokens(self) -> int:
+        """Return cumulative token count."""
+        return self.prompt_tokens + self.completion_tokens
 
     def get_usage(self) -> Dict[str, Any]:
         """Return current usage statistics."""
         return {
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
-            "total_tokens": self.prompt_tokens + self.completion_tokens,
+            "total_tokens": self.get_total_tokens(),
             "total_cost_usd": self.total_cost
         }
 
