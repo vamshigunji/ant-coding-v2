@@ -349,7 +349,7 @@ sprint_4:
         - id: S4-E2-S03
           name: "CLI Entry Point"
           branch: feature/S4-E2-S03
-          status: not-started
+          status: done
           points: 2
 
         - id: S4-E2-S04
