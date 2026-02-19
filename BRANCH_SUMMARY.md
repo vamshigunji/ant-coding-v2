@@ -1,25 +1,27 @@
-# Branch Summary: feature/S5-E3-S02
+# Branch Summary: feature/S5-E3-S03
 
 ## Story
-S5-E3-S02: Bootstrap CI and Effect Size
+S5-E3-S03: Comparison Report with Recommendation
 
 ## What Changed
 - Added to `src/ant_coding/eval/comparison.py`:
-  - `bootstrap_ci()`: Bootstrap confidence intervals for any statistic (default: mean)
-  - `bootstrap_paired_ci()`: Bootstrap CI for paired difference between experiments
-  - `interpret_effect_size()`: Human-readable Cohen's d interpretation (negligible/small/medium/large)
-  - `ComparisonResult.confidence_intervals` field for storing CIs
-  - `compare_experiments()` now computes bootstrap CIs for cost, tokens, and duration
+  - `generate_comparison_report()`: Produces markdown report with:
+    - Metric summary table (all 4 tiers with p-values and significance)
+    - Effect size interpretations
+    - Bootstrap 95% CI table for paired differences
+    - Breakeven analysis section (when baseline configured)
+    - Automated recommendation based on advantage counts
+  - `_generate_recommendation()`: Evaluates pass rate, cost, variance, quality advantages
+  - `_fmt_cost()`, `_fmt_tokens()`: Formatting helpers for infinity-safe display
 
 ## Key Decisions
-- Uses Python's built-in `random` module with optional seed for reproducibility
-- Default 1000 bootstrap resamples (fast, adequate for experiment comparison)
-- Percentile method for CI bounds (simple, robust)
-- Cohen's d thresholds: <0.2 negligible, <0.5 small, <0.8 medium, >=0.8 large
+- Recommendation uses simple advantage counting (pass rate, cost, variance, quality)
+- Reports statistical significance inline with metrics
+- Handles infinity values (cost_per_resolution when 0 tasks pass)
 
 ## Files Touched
 - `src/ant_coding/eval/comparison.py` (modified)
-- `.agent/sprint.yml` (S5-E3-S02 done)
+- `.agent/sprint.yml` (S5-E3-S03 done)
 
 ## How to Verify
 ```bash

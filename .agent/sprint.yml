@@ -455,7 +455,7 @@ sprint_5:
         - id: S5-E3-S03
           name: "Comparison Report with Recommendation"
           branch: feature/S5-E3-S03
-          status: not-started
+          status: done
           points: 3
 
         - id: S5-E3-S04
