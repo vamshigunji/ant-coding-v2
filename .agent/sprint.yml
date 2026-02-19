@@ -418,7 +418,7 @@ sprint_5:
         - id: S5-E2-S03
           name: "pass@k Computation"
           branch: feature/S5-E2-S03
-          status: not-started
+          status: done
           points: 3
 
         - id: S5-E2-S04
