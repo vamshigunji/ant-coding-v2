@@ -312,7 +312,7 @@ sprint_4:
         - id: S4-E1-S04
           name: "SingleAgent Baseline (PRD+)"
           branch: feature/S4-E1-S04
-          status: not-started
+          status: done
           points: 5
           prd_plus: true
 
