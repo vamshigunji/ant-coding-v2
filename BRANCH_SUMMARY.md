@@ -1,28 +1,33 @@
-# Branch Summary: feature/S5-E1-S03
+# Branch Summary: feature/S5-E1-S04
 
 ## Story
-S5-E1-S03: Latency Tracking
+S5-E1-S04: Observability Tests
 
 ## What Changed
-- Added `src/ant_coding/observability/latency.py` with latency utilities:
-  - `get_task_wall_time()`: calculates wall time from TASK_START to TASK_END events
-  - `get_llm_latencies()`: extracts duration_ms from LLM_CALL events
-  - `get_tool_latencies()`: extracts duration_ms from TOOL_CALL events
-  - `get_latency_summary()`: aggregate stats (total, avg, count for LLM and tool calls)
-  - `measure_duration_ms()`: context manager for timing code blocks
+- Added `tests/test_observability.py` with 19 test cases covering:
+  - JSONL writing: single event, multiple events, format validation
+  - Memory-only mode (no output_dir)
+  - Event filtering: by agent, type, task, all events
+  - Token breakdown: single agent, multiple agents, non-LLM exclusion
+  - Latency: task wall time, LLM latencies, tool latencies, summary, measure_duration_ms
+  - Agent timeline ordering
+  - EventLogger clear()
+- Marks S5-E1 epic as review (all 4 stories done)
 
 ## Key Decisions
-- duration_ms is already recorded in LLM_CALL events (S5-E1-S02), this story adds extraction/analysis utilities
-- Wall time computed from event timestamps rather than separate timer to ensure consistency
+- Exceeded the minimum 10 test cases with 19 tests for thorough coverage
+- Used helper functions for event construction to reduce duplication
 
 ## Files Touched
-- `src/ant_coding/observability/latency.py` (new)
-- `.agent/sprint.yml` (S5-E1-S03 done)
+- `tests/test_observability.py` (new)
+- `.agent/sprint.yml` (S5-E1-S04 done, S5-E1 review)
 
 ## How to Verify
 ```bash
-pytest tests/ -v  # full suite: 112 passed, 1 skipped
+pytest tests/test_observability.py -v  # 19 passed
+pytest tests/ -v  # full suite: 131 passed, 1 skipped
 ```
 
 ## Notes for Reviewer
-- Tests for latency utilities will be part of S5-E1-S04 (Observability Tests).
+- Epic S5-E1 (Event Logger & Observability) is now complete.
+- 131 tests pass across the entire codebase, 0 regressions.
