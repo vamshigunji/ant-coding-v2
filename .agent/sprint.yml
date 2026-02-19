@@ -364,7 +364,7 @@ sprint_4:
 sprint_5:
   name: "Evaluation & Observability"
   goal: "Event logging, 4-tier evaluation metrics (PRD+), updated LLM-as-Judge, failure classification, pass@k, statistical comparison with breakeven analysis."
-  status: in-progress
+  status: done
 
   epics:
     - id: S5-E1
@@ -437,7 +437,7 @@ sprint_5:
     - id: S5-E3
       name: "Statistical Comparison"
       file: stories_and_epics/Sprint-5-Epic-3.md
-      status: in-progress
+      status: review
       stories:
         - id: S5-E3-S01
           name: "Paired Statistical Tests and Breakeven Analysis (PRD+)"
@@ -461,7 +461,7 @@ sprint_5:
         - id: S5-E3-S04
           name: "Statistical Tests Validation"
           branch: feature/S5-E3-S04
-          status: not-started
+          status: done
           points: 3
 
 # =============================================================================
