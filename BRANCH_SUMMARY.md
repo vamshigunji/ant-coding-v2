@@ -1,29 +1,30 @@
-# Branch Summary: feature/S4-E2-S04
+# Branch Summary: feature/S5-E1-S01
 
 ## Story
-S4-E2-S04: End-to-End Integration Test
+S5-E1-S01: EventLogger with JSONL Output
 
 ## What Changed
-- Added `tests/test_runner.py` with 11 test cases covering:
-  - ResultWriter: directory creation, config/results/events/summary save, save_all
-  - ExperimentRunner: init, empty summary, summary with results, single task execution with mocked model
-  - CLI: argument parsing with defaults and full options
-- Marks S4-E2 epic and Sprint 4 as complete
+- Replaced the skeleton `event_logger.py` with a full `EventLogger` class
+- Added `log()` for append-only JSONL writing + in-memory storage
+- Added `get_events()` with filtering by agent_name, event_type, task_id
+- Added `get_token_breakdown()` for per-agent prompt/completion/total token stats
+- Added `clear()`, `event_count`, and `output_path` property
 
 ## Key Decisions
-- Used mocked ModelProvider to avoid real API calls
-- Tested _run_task directly rather than full run() to isolate from TaskLoader
+- EventLogger supports both file-backed (JSONL) and memory-only modes (output_dir=None)
+- Events are written immediately on `log()` — no buffering, crash-safe
+- Token breakdown only considers LLM_CALL events, uses payload keys `prompt_tokens`, `completion_tokens`, `total_tokens`
 
 ## Files Touched
-- `tests/test_runner.py` (new)
-- `.agent/sprint.yml` (S4-E2-S04 done, S4-E2 review)
+- `src/ant_coding/observability/event_logger.py` (rewritten)
+- `.agent/sprint.yml` (S5-E1-S01 in-progress → done, sprint 5 started)
 
 ## How to Verify
 ```bash
-pytest tests/test_runner.py -v
 pytest tests/ -v  # full suite: 112 passed, 1 skipped
 ```
 
 ## Notes for Reviewer
-- Sprint 4 is now fully complete (S4-E1 review, S4-E2 review).
-- 112 tests pass across the entire codebase, 0 regressions.
+- Sprint 5 has begun. This is the first story in E1 (Observability).
+- The existing Event and EventType dataclasses are preserved with same interface.
+- Tests for EventLogger will be added in S5-E1-S04 (Observability Tests).
