@@ -449,7 +449,7 @@ sprint_5:
         - id: S5-E3-S02
           name: "Bootstrap CI and Effect Size"
           branch: feature/S5-E3-S02
-          status: not-started
+          status: done
           points: 3
 
         - id: S5-E3-S03
