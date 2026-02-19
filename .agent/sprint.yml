@@ -375,7 +375,7 @@ sprint_5:
         - id: S5-E1-S01
           name: "EventLogger with JSONL Output"
           branch: feature/S5-E1-S01
-          status: in-progress
+          status: done
           points: 5
 
         - id: S5-E1-S02
