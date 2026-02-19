@@ -300,7 +300,7 @@ sprint_4:
         - id: S4-E1-S02
           name: "OrchestrationRegistry with Decorator"
           branch: feature/S4-E1-S02
-          status: not-started
+          status: done
           points: 2
 
         - id: S4-E1-S03
