@@ -381,7 +381,7 @@ sprint_5:
         - id: S5-E1-S02
           name: "Wire EventLogger into Runner and Layers"
           branch: feature/S5-E1-S02
-          status: not-started
+          status: done
           points: 5
 
         - id: S5-E1-S03

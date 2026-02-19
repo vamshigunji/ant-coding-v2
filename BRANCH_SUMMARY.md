@@ -1,23 +1,25 @@
-# Branch Summary: feature/S5-E1-S01
+# Branch Summary: feature/S5-E1-S02
 
 ## Story
-S5-E1-S01: EventLogger with JSONL Output
+S5-E1-S02: Wire EventLogger into Runner and Layers
 
 ## What Changed
-- Replaced the skeleton `event_logger.py` with a full `EventLogger` class
-- Added `log()` for append-only JSONL writing + in-memory storage
-- Added `get_events()` with filtering by agent_name, event_type, task_id
-- Added `get_token_breakdown()` for per-agent prompt/completion/total token stats
-- Added `clear()`, `event_count`, and `output_path` property
+- ModelProvider: logs LLM_CALL events with model, tokens, cost, duration_ms after each complete() call
+- MemoryManager: logs MEMORY_WRITE and MEMORY_READ events with agent, key, resolved_key, value_size/found
+- ToolRegistry: adds log_tool_call() method for TOOL_CALL events with tool_name, method, args_summary, success, duration_ms
+- ExperimentRunner: creates EventLogger instance, passes it to model/memory/tools, sets task context per-task
 
 ## Key Decisions
-- EventLogger supports both file-backed (JSONL) and memory-only modes (output_dir=None)
-- Events are written immediately on `log()` — no buffering, crash-safe
-- Token breakdown only considers LLM_CALL events, uses payload keys `prompt_tokens`, `completion_tokens`, `total_tokens`
+- Used optional injection (event_logger=None) to keep all layers backward-compatible
+- Added set_context() methods to ModelProvider and MemoryManager for per-task context switching
+- ToolRegistry exposes log_tool_call() for orchestration patterns to call; does not auto-wrap tool methods
+- Used TYPE_CHECKING import guards to avoid circular imports between layers and event_logger
 
 ## Files Touched
-- `src/ant_coding/observability/event_logger.py` (rewritten)
-- `.agent/sprint.yml` (S5-E1-S01 in-progress → done, sprint 5 started)
+- `src/ant_coding/models/provider.py` (modified)
+- `src/ant_coding/memory/manager.py` (modified)
+- `src/ant_coding/tools/registry.py` (modified)
+- `src/ant_coding/runner/experiment.py` (modified)
 
 ## How to Verify
 ```bash
@@ -25,6 +27,5 @@ pytest tests/ -v  # full suite: 112 passed, 1 skipped
 ```
 
 ## Notes for Reviewer
-- Sprint 5 has begun. This is the first story in E1 (Observability).
-- The existing Event and EventType dataclasses are preserved with same interface.
-- Tests for EventLogger will be added in S5-E1-S04 (Observability Tests).
+- All layer changes are backward-compatible — event_logger defaults to None.
+- Event logging is synchronous (append to list + file write) which is appropriate for benchmarking.
