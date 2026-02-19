@@ -399,12 +399,12 @@ sprint_5:
     - id: S5-E2
       name: "Evaluation Harness"
       file: stories_and_epics/Sprint-5-Epic-2.md
-      status: not-started
+      status: in-progress
       stories:
         - id: S5-E2-S01
           name: "4-Tier Metrics Calculation (PRD+)"
           branch: feature/S5-E2-S01
-          status: not-started
+          status: done
           points: 8
           prd_plus: true
 
