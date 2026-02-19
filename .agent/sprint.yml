@@ -289,7 +289,7 @@ sprint_4:
     - id: S4-E1
       name: "Orchestration Plugin Interface"
       file: stories_and_epics/Sprint-4-Epic-1.md
-      status: not-started
+      status: review
       stories:
         - id: S4-E1-S01
           name: "OrchestrationPattern Abstract Base Class"
@@ -325,13 +325,14 @@ sprint_4:
         - id: S4-E1-S06
           name: "Orchestration Tests"
           branch: feature/S4-E1-S06
-          status: not-started
+          status: done
           points: 3
 
     - id: S4-E2
       name: "Experiment Runner"
       file: stories_and_epics/Sprint-4-Epic-2.md
       status: not-started
+
       stories:
         - id: S4-E2-S01
           name: "ExperimentRunner Core"
