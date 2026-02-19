@@ -21,7 +21,7 @@ from ant_coding.core.config import (
 )
 from ant_coding.memory.manager import MemoryManager
 from ant_coding.models.provider import ModelProvider
-from ant_coding.observability.event_logger import Event, EventType
+from ant_coding.observability.event_logger import Event, EventLogger, EventType
 from ant_coding.orchestration.registry import OrchestrationRegistry
 from ant_coding.tasks.loader import TaskLoader
 from ant_coding.tasks.types import Task, TaskResult
@@ -60,6 +60,10 @@ class ExperimentRunner:
         self.results: List[TaskResult] = []
         self.events: List[Event] = []
         self._start_time: Optional[float] = None
+        self.event_logger = EventLogger(
+            experiment_id=config.name,
+            output_dir=str(self.output_dir),
+        )
 
     @classmethod
     def from_config_file(cls, path: str, **kwargs: Any) -> "ExperimentRunner":
@@ -83,7 +87,7 @@ class ExperimentRunner:
         agent_id: Optional[str] = None,
         payload: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Record an event."""
+        """Record an event via both in-memory list and EventLogger."""
         event = Event(
             type=event_type,
             task_id=task_id,
@@ -92,24 +96,33 @@ class ExperimentRunner:
             payload=payload or {},
         )
         self.events.append(event)
+        self.event_logger.log(event)
 
     def _init_model(self) -> ModelProvider:
-        """Initialize the model provider from config."""
+        """Initialize the model provider from config with event logging."""
         model_config = self.config.model
         if isinstance(model_config, str):
             raise ValueError(
                 f"Model config must be resolved before running. Got string: {model_config}"
             )
-        return ModelProvider(model_config)
+        return ModelProvider(
+            model_config,
+            event_logger=self.event_logger,
+            experiment_id=self.config.name,
+        )
 
     def _init_memory(self) -> MemoryManager:
-        """Initialize the memory manager from config."""
+        """Initialize the memory manager from config with event logging."""
         memory_config = self.config.memory
         if isinstance(memory_config, str):
             raise ValueError(
                 f"Memory config must be resolved before running. Got string: {memory_config}"
             )
-        return MemoryManager(memory_config)
+        return MemoryManager(
+            memory_config,
+            event_logger=self.event_logger,
+            experiment_id=self.config.name,
+        )
 
     async def _run_task(
         self,
@@ -138,8 +151,13 @@ class ExperimentRunner:
         await workspace.setup()
 
         try:
-            # Initialize tools scoped to workspace
-            tools = ToolRegistry(workspace.workspace_dir)
+            # Initialize tools scoped to workspace with event logging
+            tools = ToolRegistry(
+                workspace.workspace_dir,
+                event_logger=self.event_logger,
+                experiment_id=self.config.name,
+                task_id=task.id,
+            )
 
             # Get orchestration pattern
             pattern = OrchestrationRegistry.get(pattern_name)
@@ -147,6 +165,10 @@ class ExperimentRunner:
             # Reset memory and model usage for this task
             memory.reset()
             model.reset_usage()
+
+            # Set task context for event logging
+            model.set_context(task_id=task.id, experiment_id=self.config.name)
+            memory.set_context(task_id=task.id, experiment_id=self.config.name)
 
             # Delegate to orchestration pattern
             result = await pattern.solve(
