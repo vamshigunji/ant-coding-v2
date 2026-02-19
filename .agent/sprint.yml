@@ -343,7 +343,7 @@ sprint_4:
         - id: S4-E2-S02
           name: "Result Output Structure"
           branch: feature/S4-E2-S02
-          status: not-started
+          status: done
           points: 3
 
         - id: S4-E2-S03
