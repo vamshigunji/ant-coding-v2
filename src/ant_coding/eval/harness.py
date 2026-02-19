@@ -5,6 +5,8 @@ Tier 1 — Primary: pass_rate, cost_per_resolution
 Tier 2 — Efficiency: useful_token_ratio, overhead_ratio, tokens_per_resolution
 Tier 3 — Quality: avg_patch_quality, avg_patch_size_ratio
 Tier 4 — Robustness: resolution_variance_cv, error_recovery_rate, failure_categories
+
+Also includes pass@k computation using the unbiased estimator.
 """
 
 import math
@@ -12,6 +14,59 @@ from typing import Any, Dict, List, Optional
 
 from ant_coding.eval.metrics import ExperimentMetrics, _default_failure_categories
 from ant_coding.tasks.types import TaskResult
+
+
+def _comb(n: int, k: int) -> int:
+    """Compute binomial coefficient C(n, k). Returns 0 if k > n or k < 0."""
+    if k < 0 or k > n:
+        return 0
+    return math.comb(n, k)
+
+
+def pass_at_k(results: List[TaskResult], k: int) -> float:
+    """
+    Compute the unbiased pass@k estimator averaged across tasks.
+
+    For each task, given n total runs and c correct runs:
+        pass@k = 1 - C(n-c, k) / C(n, k)
+
+    This is the standard unbiased estimator from the Codex paper.
+
+    Args:
+        results: List of TaskResult objects (may include multiple runs per task).
+        k: Number of attempts allowed.
+
+    Returns:
+        Average pass@k across all tasks. 0.0 if no results.
+    """
+    # Group by task_id
+    task_runs: Dict[str, List[bool]] = {}
+    for r in results:
+        task_runs.setdefault(r.task_id, []).append(r.success)
+
+    if not task_runs:
+        return 0.0
+
+    scores = []
+    for task_id, successes in task_runs.items():
+        n = len(successes)
+        c = sum(1 for s in successes if s)
+
+        if k > n:
+            # If k > n, use min(k, n) — can't sample more than available
+            effective_k = n
+        else:
+            effective_k = k
+
+        denom = _comb(n, effective_k)
+        if denom == 0:
+            scores.append(0.0)
+            continue
+
+        numer = _comb(n - c, effective_k)
+        scores.append(1.0 - numer / denom)
+
+    return sum(scores) / len(scores)
 
 
 def calculate_metrics(
