@@ -283,7 +283,7 @@ sprint_3:
 sprint_4:
   name: "Orchestration & Runner"
   goal: "Plugin interface for orchestration patterns, reference implementations (including SingleAgent baseline from PRD+), and the experiment runner that wires everything together."
-  status: not-started
+  status: in-progress
 
   epics:
     - id: S4-E1
@@ -331,7 +331,7 @@ sprint_4:
     - id: S4-E2
       name: "Experiment Runner"
       file: stories_and_epics/Sprint-4-Epic-2.md
-      status: not-started
+      status: review
 
       stories:
         - id: S4-E2-S01
@@ -355,7 +355,7 @@ sprint_4:
         - id: S4-E2-S04
           name: "End-to-End Integration Test"
           branch: feature/S4-E2-S04
-          status: not-started
+          status: done
           points: 5
 
 # =============================================================================
