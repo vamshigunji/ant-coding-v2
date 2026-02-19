@@ -319,7 +319,7 @@ sprint_4:
         - id: S4-E1-S05
           name: "MinimalParallel and MinimalLoop References"
           branch: feature/S4-E1-S05
-          status: not-started
+          status: done
           points: 5
 
         - id: S4-E1-S06
