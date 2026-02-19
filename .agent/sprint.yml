@@ -411,7 +411,7 @@ sprint_5:
         - id: S5-E2-S02
           name: "LLM-as-Judge Scoring (PRD+ Dimensions)"
           branch: feature/S5-E2-S02
-          status: not-started
+          status: done
           points: 5
           prd_plus: true
 
