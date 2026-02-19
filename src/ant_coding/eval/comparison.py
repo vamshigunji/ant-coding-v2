@@ -327,6 +327,211 @@ def compare_experiments(
     return comparison
 
 
+def generate_comparison_report(
+    metrics_a: ExperimentMetrics,
+    metrics_b: ExperimentMetrics,
+    comparison: ComparisonResult,
+) -> str:
+    """
+    Generate a markdown comparison report between two experiments.
+
+    Includes a metric comparison table, statistical test results,
+    effect size interpretations, and an overall recommendation.
+
+    Args:
+        metrics_a: Metrics from experiment A.
+        metrics_b: Metrics from experiment B.
+        comparison: ComparisonResult from compare_experiments().
+
+    Returns:
+        Markdown-formatted report string.
+    """
+    lines = []
+    lines.append(f"# Experiment Comparison Report")
+    lines.append(f"")
+    lines.append(f"**Experiment A:** {metrics_a.experiment_id}")
+    lines.append(f"**Experiment B:** {metrics_b.experiment_id}")
+    lines.append(f"")
+
+    # Metric comparison table
+    lines.append("## Metric Summary")
+    lines.append("")
+    lines.append("| Metric | Exp A | Exp B | p-value | Significant |")
+    lines.append("|--------|-------|-------|---------|-------------|")
+
+    # Tier 1
+    p_pass = comparison.statistical_tests.get("pass_rate", {})
+    lines.append(
+        f"| Pass Rate (%) | {metrics_a.pass_rate:.1%} | {metrics_b.pass_rate:.1%} "
+        f"| {p_pass.get('p_value', '—')} | {'Yes' if p_pass.get('significant') else 'No'} |"
+    )
+    lines.append(
+        f"| Cost/Resolution ($) | {_fmt_cost(metrics_a.cost_per_resolution)} "
+        f"| {_fmt_cost(metrics_b.cost_per_resolution)} | — | — |"
+    )
+
+    # Tier 2
+    p_tokens = comparison.statistical_tests.get("total_tokens", {})
+    lines.append(
+        f"| Useful Token Ratio | {metrics_a.useful_token_ratio:.1%} "
+        f"| {metrics_b.useful_token_ratio:.1%} | — | — |"
+    )
+    lines.append(
+        f"| Overhead Ratio | {metrics_a.overhead_ratio:.1f}x "
+        f"| {metrics_b.overhead_ratio:.1f}x | — | — |"
+    )
+    lines.append(
+        f"| Tokens/Resolution | {_fmt_tokens(metrics_a.tokens_per_resolution)} "
+        f"| {_fmt_tokens(metrics_b.tokens_per_resolution)} | — | — |"
+    )
+
+    p_cost = comparison.statistical_tests.get("total_cost", {})
+    lines.append(
+        f"| Total Cost ($) | {metrics_a.total_cost:.2f} | {metrics_b.total_cost:.2f} "
+        f"| {p_cost.get('p_value', '—')} | {'Yes' if p_cost.get('significant') else 'No'} |"
+    )
+    lines.append(
+        f"| Total Tokens | {metrics_a.total_tokens:,} | {metrics_b.total_tokens:,} "
+        f"| {p_tokens.get('p_value', '—')} | {'Yes' if p_tokens.get('significant') else 'No'} |"
+    )
+
+    # Tier 3
+    lines.append(
+        f"| Patch Quality (1-5) | {metrics_a.avg_patch_quality:.1f} "
+        f"| {metrics_b.avg_patch_quality:.1f} | — | — |"
+    )
+    lines.append(
+        f"| Patch Size Ratio | {metrics_a.avg_patch_size_ratio:.2f} "
+        f"| {metrics_b.avg_patch_size_ratio:.2f} | — | — |"
+    )
+
+    # Tier 4
+    lines.append(
+        f"| Variance (CV) | {metrics_a.resolution_variance_cv:.3f} "
+        f"| {metrics_b.resolution_variance_cv:.3f} | — | — |"
+    )
+    lines.append(
+        f"| Error Recovery (%) | {metrics_a.error_recovery_rate:.1%} "
+        f"| {metrics_b.error_recovery_rate:.1%} | — | — |"
+    )
+    lines.append("")
+
+    # Effect sizes
+    if comparison.effect_sizes:
+        lines.append("## Effect Sizes")
+        lines.append("")
+        for metric, d in comparison.effect_sizes.items():
+            lines.append(f"- **{metric}**: {interpret_effect_size(d)}")
+        lines.append("")
+
+    # Confidence intervals
+    if comparison.confidence_intervals:
+        lines.append("## Bootstrap 95% Confidence Intervals (A - B)")
+        lines.append("")
+        lines.append("| Metric | Point Estimate | 95% CI |")
+        lines.append("|--------|---------------|--------|")
+        for metric, ci in comparison.confidence_intervals.items():
+            lines.append(
+                f"| {metric} | {ci['point_estimate']:.4f} "
+                f"| [{ci['ci_lower']:.4f}, {ci['ci_upper']:.4f}] |"
+            )
+        lines.append("")
+
+    # Breakeven analysis
+    if comparison.breakeven:
+        be = comparison.breakeven
+        lines.append("## Breakeven Analysis")
+        lines.append("")
+        lines.append(f"- Single-agent cost/resolution: {_fmt_cost(be['single_agent_cost_per_resolution'])}")
+        lines.append(f"- Multi-agent cost/task: ${be['multi_agent_cost_per_task']:.2f}")
+        lines.append(f"- Breakeven resolution rate: {be['breakeven_resolution_rate']:.0%}")
+        lines.append(f"- {be['interpretation']}")
+        lines.append("")
+
+    # Recommendation
+    lines.append("## Recommendation")
+    lines.append("")
+    recommendation = _generate_recommendation(metrics_a, metrics_b, comparison)
+    lines.append(recommendation)
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+def _generate_recommendation(
+    metrics_a: ExperimentMetrics,
+    metrics_b: ExperimentMetrics,
+    comparison: ComparisonResult,
+) -> str:
+    """Generate a recommendation based on comparison results."""
+    advantages_b = []
+    advantages_a = []
+
+    # Pass rate
+    if metrics_b.pass_rate > metrics_a.pass_rate:
+        diff = metrics_b.pass_rate - metrics_a.pass_rate
+        sig = comparison.statistical_tests.get("pass_rate", {}).get("significant", False)
+        advantages_b.append(
+            f"higher pass rate (+{diff:.1%})"
+            + (" (statistically significant)" if sig else " (not significant)")
+        )
+    elif metrics_a.pass_rate > metrics_b.pass_rate:
+        diff = metrics_a.pass_rate - metrics_b.pass_rate
+        advantages_a.append(f"higher pass rate (+{diff:.1%})")
+
+    # Cost per resolution
+    if (
+        metrics_b.cost_per_resolution < metrics_a.cost_per_resolution
+        and metrics_b.cost_per_resolution != float("inf")
+    ):
+        advantages_b.append("lower cost per resolution")
+    elif (
+        metrics_a.cost_per_resolution < metrics_b.cost_per_resolution
+        and metrics_a.cost_per_resolution != float("inf")
+    ):
+        advantages_a.append("lower cost per resolution")
+
+    # Variance
+    if metrics_b.resolution_variance_cv < metrics_a.resolution_variance_cv:
+        advantages_b.append("more consistent (lower variance)")
+    elif metrics_a.resolution_variance_cv < metrics_b.resolution_variance_cv:
+        advantages_a.append("more consistent (lower variance)")
+
+    # Patch quality
+    if metrics_b.avg_patch_quality > metrics_a.avg_patch_quality:
+        advantages_b.append("higher patch quality")
+    elif metrics_a.avg_patch_quality > metrics_b.avg_patch_quality:
+        advantages_a.append("higher patch quality")
+
+    if len(advantages_b) > len(advantages_a):
+        winner = f"**Experiment B ({metrics_b.experiment_id})** is recommended"
+        reasons = ", ".join(advantages_b)
+        return f"{winner}: {reasons}."
+    elif len(advantages_a) > len(advantages_b):
+        winner = f"**Experiment A ({metrics_a.experiment_id})** is recommended"
+        reasons = ", ".join(advantages_a)
+        return f"{winner}: {reasons}."
+    else:
+        return (
+            "**No clear winner.** Both experiments show comparable performance. "
+            "Consider running more tasks or increasing runs per task for stronger signals."
+        )
+
+
+def _fmt_cost(value: float) -> str:
+    """Format cost value, handling infinity."""
+    if value == float("inf"):
+        return "inf"
+    return f"${value:.2f}"
+
+
+def _fmt_tokens(value: float) -> str:
+    """Format token count, handling infinity."""
+    if value == float("inf"):
+        return "inf"
+    return f"{value:,.0f}"
+
+
 # ── Bootstrap Confidence Intervals ──
 
 
