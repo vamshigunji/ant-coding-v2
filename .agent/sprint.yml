@@ -370,7 +370,7 @@ sprint_5:
     - id: S5-E1
       name: "Event Logger & Observability"
       file: stories_and_epics/Sprint-5-Epic-1.md
-      status: in-progress
+      status: review
       stories:
         - id: S5-E1-S01
           name: "EventLogger with JSONL Output"
@@ -393,7 +393,7 @@ sprint_5:
         - id: S5-E1-S04
           name: "Observability Tests"
           branch: feature/S5-E1-S04
-          status: not-started
+          status: done
           points: 3
 
     - id: S5-E2
