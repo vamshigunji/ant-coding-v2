@@ -2,14 +2,16 @@
 Statistical comparison between experiments.
 
 Provides paired statistical tests (McNemar's for pass rates, Wilcoxon signed-rank
-for continuous metrics) and breakeven analysis for cost-effectiveness evaluation.
+for continuous metrics), bootstrap confidence intervals, effect size interpretation,
+and breakeven analysis for cost-effectiveness evaluation.
 
 Reference: docs/prd-plus.md Section 7, docs/success-metrics.md
 """
 
 import math
+import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from ant_coding.eval.metrics import ExperimentMetrics
 from ant_coding.tasks.types import TaskResult
@@ -30,6 +32,9 @@ class ComparisonResult:
 
     # Effect sizes: metric_name -> effect_size
     effect_sizes: Dict[str, float] = field(default_factory=dict)
+
+    # Bootstrap confidence intervals: metric_name -> {ci_lower, ci_upper, point_estimate}
+    confidence_intervals: Dict[str, Dict[str, float]] = field(default_factory=dict)
 
 
 def breakeven_analysis(
@@ -299,6 +304,17 @@ def compare_experiments(
         comparison.statistical_tests["duration"] = wilcoxon_signed_rank(durations_a, durations_b)
         comparison.effect_sizes["duration"] = compute_effect_size(durations_a, durations_b)
 
+        # Bootstrap CIs for paired differences
+        comparison.confidence_intervals["total_cost"] = bootstrap_paired_ci(
+            costs_a, costs_b, seed=42
+        )
+        comparison.confidence_intervals["total_tokens"] = bootstrap_paired_ci(
+            tokens_a, tokens_b, seed=42
+        )
+        comparison.confidence_intervals["duration"] = bootstrap_paired_ci(
+            durations_a, durations_b, seed=42
+        )
+
     # Breakeven analysis (if baseline provided)
     if baseline_metrics:
         multi_agent_cost_per_task = (
@@ -309,6 +325,118 @@ def compare_experiments(
         comparison.breakeven = breakeven_analysis(baseline_metrics, multi_agent_cost_per_task)
 
     return comparison
+
+
+# ── Bootstrap Confidence Intervals ──
+
+
+def bootstrap_ci(
+    values: List[float],
+    statistic: Callable[[List[float]], float] = None,
+    n_bootstrap: int = 1000,
+    confidence: float = 0.95,
+    seed: Optional[int] = None,
+) -> Dict[str, float]:
+    """
+    Compute bootstrap confidence interval for a statistic.
+
+    Args:
+        values: Sample values.
+        statistic: Function that computes the statistic from a sample.
+            Defaults to mean.
+        n_bootstrap: Number of bootstrap resamples.
+        confidence: Confidence level (e.g. 0.95 for 95% CI).
+        seed: Optional random seed for reproducibility.
+
+    Returns:
+        Dict with ci_lower, ci_upper, and point_estimate.
+    """
+    if statistic is None:
+        statistic = lambda v: sum(v) / len(v) if v else 0.0
+
+    if not values:
+        return {"ci_lower": 0.0, "ci_upper": 0.0, "point_estimate": 0.0}
+
+    rng = random.Random(seed)
+    n = len(values)
+    point_estimate = statistic(values)
+
+    bootstrap_stats = []
+    for _ in range(n_bootstrap):
+        sample = [values[rng.randint(0, n - 1)] for _ in range(n)]
+        bootstrap_stats.append(statistic(sample))
+
+    bootstrap_stats.sort()
+    alpha = 1.0 - confidence
+    lower_idx = max(0, int(math.floor(alpha / 2.0 * n_bootstrap)) - 1)
+    upper_idx = min(n_bootstrap - 1, int(math.ceil((1.0 - alpha / 2.0) * n_bootstrap)) - 1)
+
+    return {
+        "ci_lower": round(bootstrap_stats[lower_idx], 6),
+        "ci_upper": round(bootstrap_stats[upper_idx], 6),
+        "point_estimate": round(point_estimate, 6),
+    }
+
+
+def bootstrap_paired_ci(
+    values_a: List[float],
+    values_b: List[float],
+    statistic: Callable[[List[float]], float] = None,
+    n_bootstrap: int = 1000,
+    confidence: float = 0.95,
+    seed: Optional[int] = None,
+) -> Dict[str, float]:
+    """
+    Compute bootstrap CI for the difference in a statistic between paired samples.
+
+    Args:
+        values_a: Values from experiment A.
+        values_b: Values from experiment B (same task order).
+        statistic: Function to compute statistic. Defaults to mean.
+        n_bootstrap: Number of bootstrap resamples.
+        confidence: Confidence level.
+        seed: Optional random seed.
+
+    Returns:
+        Dict with ci_lower, ci_upper for the difference (A - B),
+        and point_estimate.
+    """
+    if len(values_a) != len(values_b):
+        raise ValueError("values_a and values_b must have the same length")
+
+    diffs = [a - b for a, b in zip(values_a, values_b)]
+    return bootstrap_ci(diffs, statistic=statistic, n_bootstrap=n_bootstrap,
+                        confidence=confidence, seed=seed)
+
+
+def interpret_effect_size(d: float) -> str:
+    """
+    Interpret Cohen's d effect size using standard thresholds.
+
+    Args:
+        d: Cohen's d value.
+
+    Returns:
+        Human-readable interpretation string.
+    """
+    abs_d = abs(d)
+    if abs_d < 0.2:
+        magnitude = "negligible"
+    elif abs_d < 0.5:
+        magnitude = "small"
+    elif abs_d < 0.8:
+        magnitude = "medium"
+    else:
+        magnitude = "large"
+
+    if d > 0:
+        direction = "A > B"
+    elif d < 0:
+        direction = "B > A"
+    else:
+        direction = "no difference"
+
+    return f"{magnitude} ({direction}, d={d:.3f})"
 
 
 # ── Internal math helpers (no scipy dependency) ──
