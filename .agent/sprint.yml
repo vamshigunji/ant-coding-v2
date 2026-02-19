@@ -424,7 +424,7 @@ sprint_5:
         - id: S5-E2-S04
           name: "Failure Classification (PRD+)"
           branch: feature/S5-E2-S04
-          status: not-started
+          status: done
           points: 5
           prd_plus: true
 
