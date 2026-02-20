@@ -1,24 +1,28 @@
-# Branch Summary: feature/S6-E2-S03
+# Branch Summary: feature/S6-E3-S01
 
 ## Story
-S6-E2-S03: Protocol Tests
+S6-E3-S01: Full Pipeline Integration Test
 
 ## What Changed
-- Created `tests/test_protocols.py` with 15 tests:
-  - MCP tests (10): list_tools, schema validation, call_tool for code_execute/file_read/file_write/file_list/git_diff/search_code, unknown tool error, exception handling
-  - A2A tests (5): AgentCard serialization, register_pattern, discover, get_agent, submit_task unknown agent
-- All tests use mock ToolRegistry and mock OrchestrationPatterns
+- Created `tests/integration/test_full_pipeline.py` with 14 tests across 5 test classes:
+  - `TestMetricsPipeline`: 4-tier metrics calculation, pass@k, JSON roundtrip
+  - `TestComparisonPipeline`: two-experiment comparison, report, CSV export
+  - `TestReportPipeline`: markdown report with all tiers
+  - `TestResultOutputPipeline`: ResultWriter save_all, metrics persistence
+  - `TestRunnerEvalPipeline`: runner → eval → compare → report end-to-end
+  - `TestEventsPipeline`: event flow through runner layers
 
 ## Key Decisions
-- Used unittest.mock to avoid real tool/pattern dependencies
-- Tested both happy paths and error paths (unknown tool, exceptions)
-- Async test for A2A submit_task using pytest-asyncio
+- Exercises every layer: config → tasks → tools → orchestration → memory → eval → report
+- Mocked LLM calls and workspace for fast execution (no real API calls)
+- Tests both single-experiment and two-experiment comparison flows
 
 ## Files Touched
-- `tests/test_protocols.py` (new)
-- `.agent/sprint.yml` (S6-E2-S03 done, S6-E2 review)
+- `tests/integration/__init__.py` (new)
+- `tests/integration/test_full_pipeline.py` (new)
+- `.agent/sprint.yml` (S6-E3-S01 done, S6-E3 in-progress)
 
 ## How to Verify
 ```bash
-pytest tests/ -v  # full suite: 239 passed, 1 skipped
+pytest tests/ -v  # full suite: 253 passed, 1 skipped
 ```
