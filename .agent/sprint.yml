@@ -541,12 +541,12 @@ sprint_6:
     - id: S6-E3
       name: "Comprehensive Tests & Documentation"
       file: stories_and_epics/Sprint-6-Epic-3.md
-      status: not-started
+      status: in-progress
       stories:
         - id: S6-E3-S01
           name: "Full Pipeline Integration Test"
           branch: feature/S6-E3-S01
-          status: not-started
+          status: done
           points: 5
 
         - id: S6-E3-S02
