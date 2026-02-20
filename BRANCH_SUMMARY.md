@@ -1,31 +1,21 @@
-# Branch Summary: feature/S6-E1-S05
+# Branch Summary: feature/S6-E1-S06
 
 ## Story
-S6-E1-S05: Experiment Registry Setup (PRD+)
+S6-E1-S06: Polish Tests
 
 ## What Changed
-- Created `src/ant_coding/core/experiment_registry.py` with `ExperimentRegistry`:
-  - `add_experiment()`: Register planned experiments with parent, variable_changed, hypothesis
-  - `update_status()`: Transition between planned/running/complete
-  - `update_outcome()`: Populate all 4 tiers of metrics from ExperimentMetrics
-  - `get_lineage()`: Trace parent chain back to root baseline
-  - `validate()`: Check for missing variable_changed and stale planned experiments
-  - `suggest_id()`: Auto-generate ID from parent + variable_changed slug
-  - `list_experiments()`, `get_experiment()`: Lookup helpers
-- Created `experiments/registry.yml` with empty template and documentation
-
-## Key Decisions
-- YAML-based registry (human-readable, version-controllable)
-- Naming convention: {parent}--{variable-slug} for automatic lineage in names
-- Infinity values stored as None in YAML (not representable)
-- Validation warns (not errors) for stale planned experiments
+- Created `tests/test_reports.py` (12 tests): markdown 4-tier, failure categories, token breakdown, comparison with significance, JSON round-trip, infinity handling, CSV format
+- Created `tests/test_replay.py` (9 tests): load, step, reset, state reconstruction, token curve
+- Created `tests/test_registry.py` (15 tests): add, parent, status, outcome, infinity, lineage chain, validate, suggest_id, persistence
+- Marked S6-E1 epic as review
 
 ## Files Touched
-- `src/ant_coding/core/experiment_registry.py` (new)
-- `experiments/registry.yml` (new)
-- `.agent/sprint.yml` (S6-E1-S05 done)
+- `tests/test_reports.py` (new)
+- `tests/test_replay.py` (new)
+- `tests/test_registry.py` (new)
+- `.agent/sprint.yml` (S6-E1-S06 done, S6-E1 review)
 
 ## How to Verify
 ```bash
-pytest tests/ -v  # full suite: 188 passed, 1 skipped
+pytest tests/ -v  # full suite: 224 passed, 1 skipped
 ```

@@ -476,7 +476,7 @@ sprint_6:
     - id: S6-E1
       name: "Reports, Replay & Experiment Registry"
       file: stories_and_epics/Sprint-6-Epic-1.md
-      status: in-progress
+      status: review
       stories:
         - id: S6-E1-S01
           name: "Markdown Report Generator"
@@ -512,7 +512,7 @@ sprint_6:
         - id: S6-E1-S06
           name: "Polish Tests"
           branch: feature/S6-E1-S06
-          status: not-started
+          status: done
           points: 2
 
     - id: S6-E2
