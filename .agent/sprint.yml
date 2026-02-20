@@ -518,7 +518,7 @@ sprint_6:
     - id: S6-E2
       name: "Protocol Layer (MCP + A2A)"
       file: stories_and_epics/Sprint-6-Epic-2.md
-      status: in-progress
+      status: review
       stories:
         - id: S6-E2-S01
           name: "MCP Tool Wrapping"
@@ -535,7 +535,7 @@ sprint_6:
         - id: S6-E2-S03
           name: "Protocol Tests"
           branch: feature/S6-E2-S03
-          status: not-started
+          status: done
           points: 3
 
     - id: S6-E3
