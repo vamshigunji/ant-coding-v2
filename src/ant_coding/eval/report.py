@@ -1,13 +1,17 @@
 """
 Report generation for experiment results.
 
-Produces markdown reports for single experiments and multi-experiment
-comparisons with 4-tier metric tables, failure breakdowns, statistical
-significance markers, and recommendations.
+Produces markdown reports, JSON export, and CSV export for single experiments
+and multi-experiment comparisons with 4-tier metric tables, failure breakdowns,
+statistical significance markers, and recommendations.
 
 Reference: docs/success-metrics.md, Sprint-6-Epic-1.md
 """
 
+import csv
+import io
+import json
+from dataclasses import asdict
 from typing import Any, Dict, List, Optional
 
 from ant_coding.eval.comparison import ComparisonResult
@@ -237,6 +241,103 @@ def generate_comparison_markdown(
                 lines.append("")
 
     return "\n".join(lines)
+
+
+# ── JSON Export ──
+
+
+def generate_json(metrics: ExperimentMetrics) -> str:
+    """
+    Export ExperimentMetrics as a JSON string.
+
+    All 4 tiers of metrics are included. The output round-trips
+    back to ExperimentMetrics via metrics_from_json().
+
+    Args:
+        metrics: ExperimentMetrics with all fields populated.
+
+    Returns:
+        Pretty-printed JSON string.
+    """
+    data = asdict(metrics)
+    # Handle infinity values (not valid JSON)
+    for key, value in data.items():
+        if isinstance(value, float) and value == float("inf"):
+            data[key] = "Infinity"
+    return json.dumps(data, indent=2, default=str)
+
+
+def metrics_from_json(json_str: str) -> ExperimentMetrics:
+    """
+    Reconstruct ExperimentMetrics from a JSON string.
+
+    Args:
+        json_str: JSON string produced by generate_json().
+
+    Returns:
+        ExperimentMetrics instance.
+    """
+    data = json.loads(json_str)
+    # Restore infinity values
+    for key, value in data.items():
+        if value == "Infinity":
+            data[key] = float("inf")
+    return ExperimentMetrics(**data)
+
+
+# ── CSV Export ──
+
+
+# Column order for CSV export
+_CSV_COLUMNS = [
+    "experiment_id",
+    "total_tasks",
+    "successful_tasks",
+    "failed_tasks",
+    "pass_rate",
+    "total_tokens",
+    "total_cost",
+    "avg_duration",
+    "cost_per_resolution",
+    "useful_token_ratio",
+    "overhead_ratio",
+    "tokens_per_resolution",
+    "avg_patch_quality",
+    "avg_patch_size_ratio",
+    "resolution_variance_cv",
+    "error_recovery_rate",
+]
+
+
+def generate_csv(metrics_list: List[ExperimentMetrics]) -> str:
+    """
+    Export a list of ExperimentMetrics as a CSV string.
+
+    One row per experiment, columns include all 11 success metrics.
+    Importable into pandas without errors.
+
+    Args:
+        metrics_list: List of ExperimentMetrics to export.
+
+    Returns:
+        CSV-formatted string with header row.
+    """
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=_CSV_COLUMNS)
+    writer.writeheader()
+
+    for metrics in metrics_list:
+        data = asdict(metrics)
+        # Filter to only CSV columns and handle infinity
+        row = {}
+        for col in _CSV_COLUMNS:
+            value = data.get(col, "")
+            if isinstance(value, float) and value == float("inf"):
+                value = "Infinity"
+            row[col] = value
+        writer.writerow(row)
+
+    return output.getvalue()
 
 
 # ── Helpers ──

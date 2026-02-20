@@ -1,23 +1,23 @@
-# Branch Summary: feature/S6-E1-S01
+# Branch Summary: feature/S6-E1-S02
 
 ## Story
-S6-E1-S01: Markdown Report Generator
+S6-E1-S02: JSON and CSV Export
 
 ## What Changed
-- Created `src/ant_coding/eval/report.py` with:
-  - `generate_markdown()`: Single experiment report with config table, 4-tier metrics summary, per-agent token breakdown, failure category breakdown
-  - `generate_comparison_markdown()`: Multi-experiment comparison with side-by-side table, significance markers (* p<0.05, ** p<0.01), breakeven analysis, pairwise effect sizes and CIs
-  - Helper functions for formatting costs/tokens/significance
+- Added to `src/ant_coding/eval/report.py`:
+  - `generate_json()`: Export ExperimentMetrics as pretty-printed JSON, handles infinity
+  - `metrics_from_json()`: Round-trip reconstruction from JSON string
+  - `generate_csv()`: Export list of ExperimentMetrics as CSV with all 11 success metrics
+  - `_CSV_COLUMNS`: Ordered column list for consistent CSV output
 
 ## Key Decisions
-- Significance markers: * for p<0.05, ** for p<0.01, ns for not significant
-- Single experiment falls back to `generate_markdown()` when only 1 experiment provided
-- Failure categories only shown if any count > 0
-- Token breakdown optional (requires EventLogger data)
+- Infinity values serialized as "Infinity" string in JSON (not valid JSON float)
+- CSV columns ordered logically: identity, tier 1, tier 2, tier 3, tier 4
+- failure_categories dict excluded from CSV (nested structure); available in JSON
 
 ## Files Touched
-- `src/ant_coding/eval/report.py` (new)
-- `.agent/sprint.yml` (S6-E1-S01 done, S6-E1 in-progress)
+- `src/ant_coding/eval/report.py` (modified)
+- `.agent/sprint.yml` (S6-E1-S02 done)
 
 ## How to Verify
 ```bash
