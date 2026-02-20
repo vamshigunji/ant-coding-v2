@@ -21,7 +21,7 @@
 # =============================================================================
 
 project: ant-coding
-current_sprint: 5
+current_sprint: 6
 
 # =============================================================================
 # SPRINT 1: Project Bootstrap & Configuration
@@ -470,18 +470,18 @@ sprint_5:
 sprint_6:
   name: "Polish & Integration"
   goal: "Reports, replay, experiment registry, MCP/A2A protocols, comprehensive tests, documentation. Production-ready framework."
-  status: not-started
+  status: in-progress
 
   epics:
     - id: S6-E1
       name: "Reports, Replay & Experiment Registry"
       file: stories_and_epics/Sprint-6-Epic-1.md
-      status: not-started
+      status: in-progress
       stories:
         - id: S6-E1-S01
           name: "Markdown Report Generator"
           branch: feature/S6-E1-S01
-          status: not-started
+          status: done
           points: 3
 
         - id: S6-E1-S02
