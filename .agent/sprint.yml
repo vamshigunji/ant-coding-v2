@@ -505,7 +505,7 @@ sprint_6:
         - id: S6-E1-S05
           name: "Experiment Registry Setup (PRD+)"
           branch: feature/S6-E1-S05
-          status: not-started
+          status: done
           points: 3
           prd_plus: true
 

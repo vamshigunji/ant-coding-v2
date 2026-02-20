@@ -1,0 +1,15 @@
+# =============================================================================
+# Experiment Registry — ant-coding
+# =============================================================================
+# This file tracks all experiments and their lineage.
+# Each experiment records its parent, variable changed, hypothesis, and outcome.
+#
+# Naming convention: {parent_id}--{variable_changed_slug}
+# Example: baseline-seq-shared-claude--memory-isolated
+#
+# Status: planned → running → complete
+#
+# See docs/experimentation-playbook.md for full details.
+# =============================================================================
+
+experiments: []
