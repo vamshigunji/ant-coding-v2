@@ -1,9 +1,8 @@
 import pytest
-import asyncio
 from unittest.mock import AsyncMock, patch, MagicMock
 from ant_coding.core.config import ModelConfig
 from ant_coding.models.provider import ModelProvider, ModelError, TokenBudgetExceeded
-from ant_coding.models.registry import ModelRegistry, ModelNotFoundError
+from ant_coding.models.registry import ModelRegistry
 
 @pytest.fixture
 def mock_model_config():

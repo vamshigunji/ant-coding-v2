@@ -3,8 +3,8 @@ Character-driven agent that uses a persona to generate responses.
 """
 
 import logging
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass, field
+from typing import List, Dict, Any
+from dataclasses import dataclass
 
 from ant_coding.models.provider import ModelProvider
 from ant_coding.memory.manager import MemoryManager

@@ -8,7 +8,7 @@ import time
 from typing import TYPE_CHECKING, List, Dict, Any, Optional
 
 import litellm
-from litellm import acompletion, model_cost
+from litellm import acompletion
 
 from ant_coding.core.config import ModelConfig, get_env
 
@@ -133,7 +133,7 @@ class ModelProvider:
                 cost = litellm.completion_cost(completion_response=response)
                 if cost:
                     self.total_cost += float(cost)
-            except:
+            except Exception:
                 pass
 
             # Budget enforcement after update

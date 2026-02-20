@@ -5,9 +5,7 @@ Comprehensive tests for the observability layer: EventLogger, latency tracking.
 import json
 import time
 from datetime import datetime, timedelta
-from pathlib import Path
 
-import pytest
 
 from ant_coding.observability.event_logger import Event, EventLogger, EventType
 from ant_coding.observability.latency import (

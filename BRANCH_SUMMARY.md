@@ -1,31 +1,29 @@
-# Branch Summary: feature/S6-E3-S03
+# Branch Summary: feature/S6-E3-S04
 
 ## Story
-S6-E3-S03: README and Developer Documentation
+S6-E3-S04: Linting and Code Quality
 
 ## What Changed
-- Updated `README.md` with:
-  - Project overview and purpose
-  - Architecture diagram (ASCII) showing layer interactions
-  - 4-tier metrics framework table
-  - Quickstart guide (install, configure, run, compare)
-  - Project structure tree
-  - Links to detailed docs
-- Created `docs/developer-guide.md` with:
-  - How to create a new OrchestrationPattern (subclass + register)
-  - How to add new tools to ToolRegistry
-  - Experiment YAML config reference with all fields
-  - Memory modes explained (shared, isolated, hybrid)
-  - Baseline configuration for PRD+ overhead_ratio
-  - Experiment registry usage and naming convention
-  - Statistical comparison API
-  - Session replay API
+- Fixed 85 ruff lint errors across src/ and tests/:
+  - 72 unused imports (auto-fixed by ruff --fix)
+  - 6 f-strings without placeholders (auto-fixed)
+  - 3 bare `except:` → `except Exception:` (manual)
+  - 2 ambiguous variable names `l` → `ln` (manual)
+  - 1 lambda assignment → def (manual)
+  - 1 multi-statement line split (manual)
+  - 2 re-export aliases for vanilla_architecture __init__.py (manual)
+- Restored 3 SingleAgent imports removed by auto-fix (noqa: F401)
+
+## Result
+- `ruff check src/ tests/` → All checks passed! (0 errors)
+- `pytest tests/` → 279 passed, 1 skipped
 
 ## Files Touched
-- `README.md` (updated)
-- `docs/developer-guide.md` (new)
-- `.agent/sprint.yml` (S6-E3-S03 done)
+- Multiple source files across src/ and tests/ (lint fixes)
+- `.agent/sprint.yml` (S6-E3-S04 done, S6-E3 review, Sprint 6 done)
 
 ## How to Verify
-- Read README.md for quickstart clarity
-- Read docs/developer-guide.md for extension patterns
+```bash
+ruff check src/ tests/       # 0 errors
+pytest tests/ -v              # 279 passed, 1 skipped
+```

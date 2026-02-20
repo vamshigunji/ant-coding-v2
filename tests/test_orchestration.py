@@ -2,12 +2,11 @@
 Comprehensive tests for the orchestration layer.
 """
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from ant_coding.core.config import MemoryConfig, MemoryMode, ModelConfig
+from ant_coding.core.config import MemoryConfig, MemoryMode
 from ant_coding.memory.manager import MemoryManager
 from ant_coding.models.provider import ModelProvider
 from ant_coding.orchestration.base import OrchestrationPattern

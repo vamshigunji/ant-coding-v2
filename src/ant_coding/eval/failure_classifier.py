@@ -10,7 +10,7 @@ Reference: docs/prd-plus.md Section 4
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from ant_coding.core.config import get_env
 from ant_coding.observability.event_logger import Event, EventType
@@ -206,7 +206,7 @@ class FailureClassifier:
             cleaned = content.strip()
             if cleaned.startswith("```"):
                 lines = cleaned.split("\n")
-                lines = [l for l in lines if not l.strip().startswith("```")]
+                lines = [ln for ln in lines if not ln.strip().startswith("```")]
                 cleaned = "\n".join(lines)
 
             data = json.loads(cleaned)

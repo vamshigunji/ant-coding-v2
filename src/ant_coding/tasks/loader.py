@@ -4,7 +4,7 @@ Utilities for loading tasks from various sources.
 
 import yaml
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Union
 from ant_coding.tasks.types import Task, TaskSource, TaskDifficulty
 from ant_coding.tasks.swebench import load_swebench
 from ant_coding.core.config import TasksConfig

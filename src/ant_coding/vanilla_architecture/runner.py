@@ -10,12 +10,11 @@ Usage:
 import asyncio
 import argparse
 import logging
-import sys
 from pathlib import Path
 
 import yaml
 
-from ant_coding.core.config import ModelConfig, MemoryConfig, MemoryMode, get_env
+from ant_coding.core.config import ModelConfig, MemoryConfig, MemoryMode
 from ant_coding.models.provider import ModelProvider
 from ant_coding.memory.manager import MemoryManager
 from ant_coding.vanilla_architecture.agent import CharacterAgent, CharacterConfig
@@ -152,7 +151,7 @@ def main():
             # Fallback: construct a minimal config
             model_config = ModelConfig(
                 name=args.model,
-                litellm_model=f"anthropic/claude-3-5-sonnet-20241022",
+                litellm_model="anthropic/claude-3-5-sonnet-20241022",
                 api_key_env="ANTHROPIC_API_KEY",
             )
 

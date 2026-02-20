@@ -3,9 +3,7 @@ End-to-end integration tests for ExperimentRunner and output.
 """
 
 import json
-from dataclasses import asdict
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -182,7 +180,7 @@ async def test_runner_run_task_success():
     memory.write = MagicMock()
 
     # Need to import SingleAgent to register it
-    from ant_coding.orchestration.examples.single_agent import SingleAgent
+    from ant_coding.orchestration.examples.single_agent import SingleAgent  # noqa: F401
 
     result = await runner._run_task(task, model, memory, "single-agent")
 

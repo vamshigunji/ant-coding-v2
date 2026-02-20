@@ -8,7 +8,7 @@ Reference: docs/prd.md Section 8, Sprint-6-Epic-2.md (S6-E2-S01)
 """
 
 import logging
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List
 
 from ant_coding.tools.registry import ToolRegistry
 

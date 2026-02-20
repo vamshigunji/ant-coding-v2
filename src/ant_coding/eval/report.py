@@ -12,7 +12,7 @@ import csv
 import io
 import json
 from dataclasses import asdict
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from ant_coding.eval.comparison import ComparisonResult
 from ant_coding.eval.metrics import ExperimentMetrics
@@ -47,8 +47,8 @@ def generate_markdown(
     # Metadata
     lines.append("## Configuration")
     lines.append("")
-    lines.append(f"| Parameter | Value |")
-    lines.append(f"|-----------|-------|")
+    lines.append("| Parameter | Value |")
+    lines.append("|-----------|-------|")
     lines.append(f"| Experiment ID | {metrics.experiment_id} |")
     if architecture:
         lines.append(f"| Architecture | {architecture} |")

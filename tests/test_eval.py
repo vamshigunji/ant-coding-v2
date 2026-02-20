@@ -3,7 +3,6 @@ Comprehensive tests for the evaluation layer: metrics, LLM judge, pass@k, failur
 """
 
 import json
-import math
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest

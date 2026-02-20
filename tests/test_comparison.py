@@ -3,7 +3,6 @@ Tests for statistical comparison: McNemar's, Wilcoxon, bootstrap CI,
 effect size, breakeven analysis, and report generation.
 """
 
-import math
 
 import pytest
 
