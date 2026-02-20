@@ -1,4 +1,3 @@
-import pytest
 from ant_coding.tasks.types import Task, TaskResult, TaskSource, TaskDifficulty, VALID_FAILURE_CATEGORIES
 from ant_coding.observability.event_logger import Event, EventType
 from ant_coding.eval.metrics import ExperimentMetrics

@@ -10,7 +10,7 @@ Also includes pass@k computation using the unbiased estimator.
 """
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from ant_coding.eval.metrics import ExperimentMetrics, _default_failure_categories
 from ant_coding.tasks.types import TaskResult

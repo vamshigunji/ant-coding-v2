@@ -2,7 +2,6 @@
 Registry for managing and instantiating model providers.
 """
 
-import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 from ant_coding.core.config import ModelConfig, load_model_config

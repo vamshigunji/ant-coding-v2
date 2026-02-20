@@ -2,10 +2,7 @@
 Tests for session replay from JSONL event logs.
 """
 
-import json
 import tempfile
-from datetime import datetime
-from pathlib import Path
 
 import pytest
 

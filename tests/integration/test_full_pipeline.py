@@ -8,8 +8,6 @@ Reference: Sprint-6-Epic-3.md (S6-E3-S01)
 """
 
 import json
-import tempfile
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -26,7 +24,6 @@ from ant_coding.core.config import (
 )
 from ant_coding.eval.comparison import compare_experiments, generate_comparison_report
 from ant_coding.eval.harness import calculate_metrics, pass_at_k
-from ant_coding.eval.metrics import ExperimentMetrics
 from ant_coding.eval.report import (
     generate_csv,
     generate_json,
@@ -379,7 +376,7 @@ class TestRunnerEvalPipeline:
         memory.set_context = MagicMock()
 
         # Import to register pattern
-        from ant_coding.orchestration.examples.single_agent import SingleAgent
+        from ant_coding.orchestration.examples.single_agent import SingleAgent  # noqa: F401
 
         # Mock workspace setup/teardown
         with patch("ant_coding.runner.experiment.TaskWorkspace") as MockWorkspace, \
@@ -535,7 +532,6 @@ class TestEventsPipeline:
         memory.write = MagicMock()
         memory.set_context = MagicMock()
 
-        from ant_coding.orchestration.examples.single_agent import SingleAgent
 
         with patch("ant_coding.runner.experiment.TaskWorkspace") as MockWS, \
              patch("ant_coding.runner.experiment.ToolRegistry") as MockTR:

@@ -8,9 +8,6 @@ Reference: Sprint-6-Epic-3.md (S6-E3-S02)
 """
 
 import json
-import math
-import tempfile
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -31,6 +28,7 @@ from ant_coding.eval.comparison import (
     wilcoxon_signed_rank,
 )
 from ant_coding.eval.failure_classifier import FailureClassifier
+from ant_coding.orchestration.examples.single_agent import SingleAgent  # noqa: F401
 from ant_coding.eval.harness import calculate_metrics, pass_at_k
 from ant_coding.eval.llm_judge import LLMJudge, _default_scores
 from ant_coding.eval.report import generate_json, generate_markdown, metrics_from_json
@@ -185,7 +183,6 @@ class TestEmptyModelResponse:
         memory.write = MagicMock()
         memory.set_context = MagicMock()
 
-        from ant_coding.orchestration.examples.single_agent import SingleAgent
 
         with patch("ant_coding.runner.experiment.TaskWorkspace") as MockWS, \
              patch("ant_coding.runner.experiment.ToolRegistry") as MockTR:
@@ -231,7 +228,6 @@ class TestToolTimeout:
         memory.reset = MagicMock()
         memory.set_context = MagicMock()
 
-        from ant_coding.orchestration.examples.single_agent import SingleAgent
 
         with patch("ant_coding.runner.experiment.TaskWorkspace") as MockWS, \
              patch("ant_coding.runner.experiment.ToolRegistry") as MockTR:

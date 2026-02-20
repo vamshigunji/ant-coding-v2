@@ -3,7 +3,6 @@ Comprehensive tests for the ant-coding tool layer.
 """
 
 import pytest
-import asyncio
 from ant_coding.tools.code_executor import CodeExecutor
 from ant_coding.tools.file_ops import FileOperations, SecurityError
 from ant_coding.tools.git_ops import GitOperations

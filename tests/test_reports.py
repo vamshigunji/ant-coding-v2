@@ -6,7 +6,6 @@ import csv
 import io
 import json
 
-import pytest
 
 from ant_coding.eval.comparison import ComparisonResult
 from ant_coding.eval.metrics import ExperimentMetrics

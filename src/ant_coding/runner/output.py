@@ -5,11 +5,10 @@ Creates a timestamped output directory with config, results, and events.
 """
 
 import json
-import shutil
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 
 from ant_coding.observability.event_logger import Event
 from ant_coding.tasks.types import TaskResult

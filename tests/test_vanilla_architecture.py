@@ -3,7 +3,7 @@ Tests for the vanilla_architecture roast battle system.
 """
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 from ant_coding.core.config import MemoryConfig, MemoryMode, ModelConfig
 from ant_coding.memory.manager import MemoryManager

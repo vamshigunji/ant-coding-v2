@@ -5,7 +5,6 @@ Tests for experiment registry: add, update, lineage, validate.
 import tempfile
 from pathlib import Path
 
-import pytest
 
 from ant_coding.core.experiment_registry import ExperimentRegistry
 from ant_coding.eval.metrics import ExperimentMetrics

@@ -5,7 +5,6 @@ from ant_coding.core.config import (
     load_model_config,
     load_memory_config,
     load_experiment_config,
-    ExperimentConfig,
     ConfigError,
     MemoryMode,
 )

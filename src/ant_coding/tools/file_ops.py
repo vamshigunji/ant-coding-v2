@@ -2,11 +2,9 @@
 Safe file operations scoped to a workspace directory.
 """
 
-import os
 import shutil
-import fnmatch
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Any, Union
 
 class SecurityError(Exception):
     """Exception raised for security violations like path traversal."""

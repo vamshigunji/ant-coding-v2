@@ -2,9 +2,8 @@
 Git operations for managing code changes within a workspace.
 """
 
-import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Union
 from git import Repo
 
 class GitOperations:
@@ -16,7 +15,7 @@ class GitOperations:
         self.workspace_dir = Path(workspace_dir).resolve()
         try:
             self.repo = Repo(self.workspace_dir)
-        except:
+        except Exception:
             # If not a repo, initialize one
             self.repo = Repo.init(self.workspace_dir)
 
@@ -39,7 +38,8 @@ class GitOperations:
                 return []
                 
             for line in status_output.splitlines():
-                if not line: continue
+                if not line:
+                    continue
                 index_status = line[0]
                 worktree_status = line[1]
                 file_path = line[3:]
@@ -50,7 +50,7 @@ class GitOperations:
                     status_list.append({"file": file_path, "status": "untracked"})
                 else:
                     status_list.append({"file": file_path, "status": "modified"})
-        except:
+        except Exception:
             pass
             
         return status_list

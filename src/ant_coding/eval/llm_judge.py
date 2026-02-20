@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from ant_coding.core.config import ModelConfig, get_env
+from ant_coding.core.config import get_env
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +169,7 @@ class LLMJudge:
             cleaned = content.strip()
             if cleaned.startswith("```"):
                 lines = cleaned.split("\n")
-                lines = [l for l in lines if not l.strip().startswith("```")]
+                lines = [ln for ln in lines if not ln.strip().startswith("```")]
                 cleaned = "\n".join(lines)
 
             data = json.loads(cleaned)

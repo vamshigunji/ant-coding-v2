@@ -5,18 +5,13 @@ Manages the outer loop (config loading, task iteration, evaluation) while
 delegating the inner loop (agent coordination) to OrchestrationPattern plugins.
 """
 
-import asyncio
-import json
 import logging
 import time
-from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
 from ant_coding.core.config import (
     ExperimentConfig,
-    ModelConfig,
-    MemoryConfig,
     load_experiment_config,
 )
 from ant_coding.memory.manager import MemoryManager

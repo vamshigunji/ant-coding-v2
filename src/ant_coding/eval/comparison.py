@@ -11,7 +11,7 @@ Reference: docs/prd-plus.md Section 7, docs/success-metrics.md
 import math
 import random
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 from ant_coding.eval.metrics import ExperimentMetrics
 from ant_coding.tasks.types import TaskResult
@@ -347,11 +347,11 @@ def generate_comparison_report(
         Markdown-formatted report string.
     """
     lines = []
-    lines.append(f"# Experiment Comparison Report")
-    lines.append(f"")
+    lines.append("# Experiment Comparison Report")
+    lines.append("")
     lines.append(f"**Experiment A:** {metrics_a.experiment_id}")
     lines.append(f"**Experiment B:** {metrics_b.experiment_id}")
-    lines.append(f"")
+    lines.append("")
 
     # Metric comparison table
     lines.append("## Metric Summary")
@@ -557,7 +557,8 @@ def bootstrap_ci(
         Dict with ci_lower, ci_upper, and point_estimate.
     """
     if statistic is None:
-        statistic = lambda v: sum(v) / len(v) if v else 0.0
+        def statistic(v: list) -> float:
+            return sum(v) / len(v) if v else 0.0
 
     if not values:
         return {"ci_lower": 0.0, "ci_upper": 0.0, "point_estimate": 0.0}

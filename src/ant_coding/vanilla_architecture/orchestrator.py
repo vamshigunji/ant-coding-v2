@@ -4,10 +4,9 @@ Orchestrator that runs a turn-based roast battle between two CharacterAgents.
 
 import logging
 from typing import List, Dict, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from ant_coding.vanilla_architecture.agent import CharacterAgent
-from ant_coding.models.provider import ModelProvider
 
 logger = logging.getLogger(__name__)
 

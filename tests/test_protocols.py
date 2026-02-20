@@ -2,9 +2,7 @@
 Tests for MCP and A2A protocol layers.
 """
 
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
