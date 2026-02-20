@@ -1,23 +1,25 @@
-# Branch Summary: feature/S6-E1-S02
+# Branch Summary: feature/S6-E1-S03
 
 ## Story
-S6-E1-S02: JSON and CSV Export
+S6-E1-S03: Session Replay
 
 ## What Changed
-- Added to `src/ant_coding/eval/report.py`:
-  - `generate_json()`: Export ExperimentMetrics as pretty-printed JSON, handles infinity
-  - `metrics_from_json()`: Round-trip reconstruction from JSON string
-  - `generate_csv()`: Export list of ExperimentMetrics as CSV with all 11 success metrics
-  - `_CSV_COLUMNS`: Ordered column list for consistent CSV output
+- Created `src/ant_coding/observability/replay.py` with `SessionReplay` class:
+  - Loads events from JSONL file, deserializes back to Event objects
+  - `step(count)`: Returns next N events, advances cursor
+  - `state_at(event_index)`: Reconstructs memory state by replaying MEMORY_WRITE events
+  - `token_curve()`: Returns cumulative token curve as (event_index, tokens) tuples
+  - `get_events()`: Filtered event retrieval by type and task_id
+  - `reset()`: Resets cursor to beginning
 
 ## Key Decisions
-- Infinity values serialized as "Infinity" string in JSON (not valid JSON float)
-- CSV columns ordered logically: identity, tier 1, tier 2, tier 3, tier 4
-- failure_categories dict excluded from CSV (nested structure); available in JSON
+- Events deserialized back to full Event objects (not raw dicts) for type safety
+- State reconstruction replays all MEMORY_WRITE events up to the index
+- Token curve only includes LLM_CALL events (where tokens are consumed)
 
 ## Files Touched
-- `src/ant_coding/eval/report.py` (modified)
-- `.agent/sprint.yml` (S6-E1-S02 done)
+- `src/ant_coding/observability/replay.py` (new)
+- `.agent/sprint.yml` (S6-E1-S03 done)
 
 ## How to Verify
 ```bash

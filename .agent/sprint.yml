@@ -493,7 +493,7 @@ sprint_6:
         - id: S6-E1-S03
           name: "Session Replay"
           branch: feature/S6-E1-S03
-          status: not-started
+          status: done
           points: 5
 
         - id: S6-E1-S04
