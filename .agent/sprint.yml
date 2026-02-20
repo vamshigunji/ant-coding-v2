@@ -552,7 +552,7 @@ sprint_6:
         - id: S6-E3-S02
           name: "Edge Case and Error Handling Tests"
           branch: feature/S6-E3-S02
-          status: not-started
+          status: done
           points: 3
 
         - id: S6-E3-S03

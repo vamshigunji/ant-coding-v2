@@ -1,28 +1,29 @@
-# Branch Summary: feature/S6-E3-S01
+# Branch Summary: feature/S6-E3-S02
 
 ## Story
-S6-E3-S01: Full Pipeline Integration Test
+S6-E3-S02: Edge Case and Error Handling Tests
 
 ## What Changed
-- Created `tests/integration/test_full_pipeline.py` with 14 tests across 5 test classes:
-  - `TestMetricsPipeline`: 4-tier metrics calculation, pass@k, JSON roundtrip
-  - `TestComparisonPipeline`: two-experiment comparison, report, CSV export
-  - `TestReportPipeline`: markdown report with all tiers
-  - `TestResultOutputPipeline`: ResultWriter save_all, metrics persistence
-  - `TestRunnerEvalPipeline`: runner → eval → compare → report end-to-end
-  - `TestEventsPipeline`: event flow through runner layers
+- Created `tests/integration/test_edge_cases.py` with 26 tests across 8 test classes:
+  - `TestEmptyExperiment`: 0 tasks, empty metrics, empty report
+  - `TestAllTasksFail`: 0% pass, infinity values, JSON roundtrip with inf
+  - `TestEmptyModelResponse`: model returns empty string
+  - `TestToolTimeout`: pattern exception caught gracefully
+  - `TestCorruptEvents`: empty/missing/blank-line events.jsonl
+  - `TestJudgeMalformedResponse`: API failure, non-JSON, code fences, out-of-range scores
+  - `TestClassifierEdgeCases`: timeout/tool_failure shortcuts, LLM fallback, invalid category
+  - `TestComparisonEdgeCases`: identical results, single task, single-value bootstrap
 
 ## Key Decisions
-- Exercises every layer: config → tasks → tools → orchestration → memory → eval → report
-- Mocked LLM calls and workspace for fast execution (no real API calls)
-- Tests both single-experiment and two-experiment comparison flows
+- Focused on graceful degradation — no crashes on bad input
+- Tests both deterministic shortcuts and LLM fallback paths
+- Verifies infinity values survive JSON serialization
 
 ## Files Touched
-- `tests/integration/__init__.py` (new)
-- `tests/integration/test_full_pipeline.py` (new)
-- `.agent/sprint.yml` (S6-E3-S01 done, S6-E3 in-progress)
+- `tests/integration/test_edge_cases.py` (new)
+- `.agent/sprint.yml` (S6-E3-S02 done)
 
 ## How to Verify
 ```bash
-pytest tests/ -v  # full suite: 253 passed, 1 skipped
+pytest tests/ -v  # full suite: 279 passed, 1 skipped
 ```
