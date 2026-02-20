@@ -6,7 +6,7 @@
 **Goal:** Build the report generator, session replay, cross-experiment comparison CLI, and experiment registry. After this epic, `scripts/compare_results.py` produces a publication-ready markdown report and the experiment registry tracks lineage.
 
 **Dependencies:** S5-E2 (eval harness), S5-E3 (statistical), S5-E1 (event logger)  
-**Reference:** `docs/experimentation-playbook.md`, `docs/success-metrics.md`
+**Reference:** `docs/guides/experimentation-playbook.md`, `docs/spec/success-metrics.md`
 
 ---
 
@@ -129,9 +129,9 @@ Then it prints the single experiment's metrics (all 4 tiers)
 **Points:** 3
 
 **Description:**  
-Implement the experiment registry system from `docs/experimentation-playbook.md`. This enables experiment lineage tracking: each experiment records its parent, the single variable changed, a hypothesis, and post-run insights.
+Implement the experiment registry system from `docs/guides/experimentation-playbook.md`. This enables experiment lineage tracking: each experiment records its parent, the single variable changed, a hypothesis, and post-run insights.
 
-**Reference:** `docs/experimentation-playbook.md` (Experiment Journal section)
+**Reference:** `docs/guides/experimentation-playbook.md` (Experiment Journal section)
 
 **Acceptance Criteria:**
 

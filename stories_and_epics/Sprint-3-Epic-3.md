@@ -3,10 +3,10 @@
 **Epic ID:** S3-E3  
 **Sprint:** 3  
 **Priority:** P0 — Foundation (retroactive)  
-**Goal:** Extend the already-built type definitions and config models with fields required by PRD+ (`docs/prd-plus.md`) and the success metrics framework (`docs/success-metrics.md`). These changes are prerequisites for the evaluation harness in Sprint 5.
+**Goal:** Extend the already-built type definitions and config models with fields required by PRD+ (`docs/spec/prd-plus.md`) and the success metrics framework (`docs/spec/success-metrics.md`). These changes are prerequisites for the evaluation harness in Sprint 5.
 
 **Dependencies:** S1-E1 (config, types — already done), S2-E2 (memory — already done)  
-**Reference:** `docs/prd-plus.md` Sections 1, 2; `docs/success-metrics.md`
+**Reference:** `docs/spec/prd-plus.md` Sections 1, 2; `docs/spec/success-metrics.md`
 
 ---
 
@@ -61,7 +61,7 @@ Then all existing tests still pass (backward compatible defaults)
 **Points:** 3
 
 **Description:**  
-Add the 11 success metrics fields from `docs/success-metrics.md` to the `ExperimentMetrics` dataclass. These are storage fields only — calculation logic is Sprint 5.
+Add the 11 success metrics fields from `docs/spec/success-metrics.md` to the `ExperimentMetrics` dataclass. These are storage fields only — calculation logic is Sprint 5.
 
 **Acceptance Criteria:**
 

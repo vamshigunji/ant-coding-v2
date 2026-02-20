@@ -6,7 +6,7 @@
 **Goal:** Wrap framework tools as MCP endpoints and register agents via A2A protocol. After this epic, ant-coding tools can be accessed by external clients (Claude Desktop, etc.) and agents can be discovered by external orchestrators.
 
 **Dependencies:** S3-E2 (tools), S4-E1 (orchestration patterns)  
-**Reference:** `docs/prd.md` Section 8 (Protocol Layer)
+**Reference:** `docs/spec/prd.md` Section 8 (Protocol Layer)
 
 ---
 

@@ -6,7 +6,7 @@ ant-coding is a benchmarking framework that empirically compares multi-agent LLM
 
 **Repository:** https://github.com/vamshigunji/ant-coding-v2
 
-**Naming note:** The PRD (`docs/prd.md`) uses the old project name "AgentForge" in places. The project is **ant-coding**. The Python package is **`ant_coding`**. Use `ant_coding` everywhere in code (imports, module names, error classes). Ignore "AgentForge" in the PRD — treat it as "ant-coding".
+**Naming note:** The PRD (`docs/spec/prd.md`) uses the old project name "AgentForge" in places. The project is **ant-coding**. The Python package is **`ant_coding`**. Use `ant_coding` everywhere in code (imports, module names, error classes). Ignore "AgentForge" in the PRD — treat it as "ant-coding".
 
 ---
 
@@ -20,23 +20,23 @@ ant-coding is a benchmarking framework that empirically compares multi-agent LLM
 ### First session (one-time)
 
 3. **This file** — You're reading it now.
-4. **`docs/prd.md`** — Full technical specification.
-5. **`docs/architecture/git-workflow.md`** — Branching rules, commit convention, BRANCH_SUMMARY template.
+4. **`docs/spec/prd.md`** — Full technical specification.
+5. **`docs/guides/contributing.md`** — Branching rules, commit convention, BRANCH_SUMMARY template.
 
 ### Triggered by context
 
 | Trigger | Read This |
 |---------|-----------|
-| Story touches a **new layer** you haven't built yet | `docs/prd.md` — relevant section (Sections 4-11) |
-| Story involves **metrics, eval, types, or config** | `docs/prd-plus.md` — additional requirements extending the PRD |
+| Story touches a **new layer** you haven't built yet | `docs/spec/prd.md` — relevant section (Sections 4-11) |
+| Story involves **metrics, eval, types, or config** | `docs/spec/prd-plus.md` — additional requirements extending the PRD |
 | Unsure how **layers connect** or what depends on what | `docs/architecture/system-overview.md` |
 | Building anything in the **memory layer** | `docs/architecture/memory-architecture.md` |
 | Wiring the **ExperimentRunner** or connecting layers | `docs/architecture/layer-interactions.md` and `docs/architecture/experiment-lifecycle.md` |
-| Unsure about **branch naming, commit format, or merge process** | `docs/architecture/git-workflow.md` |
-| Writing a **BRANCH_SUMMARY.md** | `docs/architecture/git-workflow.md` — template at the bottom |
+| Unsure about **branch naming, commit format, or merge process** | `docs/guides/contributing.md` |
+| Writing a **BRANCH_SUMMARY.md** | `docs/guides/contributing.md` — template at the bottom |
 | An epic is complete and you're doing **self-review** | Re-read the epic file's completion checklist |
-| Understanding the **experiment config schema** | `docs/prd.md` Section 12 |
-| Understanding **evaluation metrics or pass@k** | `docs/prd.md` Section 10 + `docs/prd-plus.md` Section 6 |
+| Understanding the **experiment config schema** | `docs/spec/prd.md` Section 12 |
+| Understanding **evaluation metrics or pass@k** | `docs/spec/prd.md` Section 10 + `docs/spec/prd-plus.md` Section 6 |
 
 **Rule: when in doubt, read the relevant doc. It's faster than guessing wrong and refactoring later.**
 

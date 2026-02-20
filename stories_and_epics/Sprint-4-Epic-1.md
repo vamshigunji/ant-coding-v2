@@ -6,7 +6,7 @@
 **Goal:** Build the abstract base class, registry, and reference implementations for orchestration patterns. Includes the SingleAgent baseline (PRD+) as the control group for all multi-agent experiments. After this epic, new architectures can be created by subclassing `OrchestrationPattern` and registering with a decorator.
 
 **Dependencies:** S2-E1 (models), S2-E2 (memory), S3-E2 (tools)  
-**Reference:** `docs/prd.md` Section 7, `docs/prd-plus.md` Section 5
+**Reference:** `docs/spec/prd.md` Section 7, `docs/spec/prd-plus.md` Section 5
 
 ---
 
@@ -130,7 +130,7 @@ Then model.get_usage()["total_tokens"] > 0 (at least 2 LLM calls were made)
 **Description:**  
 Build the SingleAgent pattern — the control group for all multi-agent experiments. This establishes the performance floor and provides the denominator for `overhead_ratio` calculation. Every multi-agent experiment should reference a SingleAgent experiment via `baseline_experiment_id`.
 
-**Reference:** `docs/prd-plus.md` Section 5, `docs/success-metrics.md` Tier 2 (overhead_ratio)
+**Reference:** `docs/spec/prd-plus.md` Section 5, `docs/spec/success-metrics.md` Tier 2 (overhead_ratio)
 
 **Acceptance Criteria:**
 

@@ -281,7 +281,7 @@ When comparing experiment A vs experiment B:
 
 ### The Key Metric: Cost Per Successful Task
 
-> For the full metrics framework (11 metrics across 4 tiers), see `docs/success-metrics.md`
+> For the full metrics framework (11 metrics across 4 tiers), see `docs/spec/success-metrics.md`
 
 ```
 cost_per_success = total_cost / tasks_passed

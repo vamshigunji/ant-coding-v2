@@ -126,7 +126,7 @@ pytest tests/ --cov=ant_coding --cov-report=term-missing
 ```
 ant-coding/
 ├── configs/              # Experiment and model configs (YAML)
-├── docs/                 # PRD, architecture docs, experimentation playbook
+├── docs/                 # Documentation (spec/, architecture/, guides/)
 ├── experiments/          # Experiment registry (registry.yml)
 ├── scripts/              # CLI scripts (run_experiment, compare_results)
 ├── src/ant_coding/       # Source code
@@ -148,8 +148,10 @@ ant-coding/
 
 ## Documentation
 
-- [Developer Guide](docs/developer-guide.md) — Extending the framework
-- [PRD](docs/prd.md) — Product requirements
-- [PRD+](docs/prd-plus.md) — Extended metrics and evaluation
-- [Experimentation Playbook](docs/experimentation-playbook.md) — Running experiments
-- [Success Metrics](docs/success-metrics.md) — What we measure and why
+See [docs/README.md](docs/README.md) for the full documentation index.
+
+**Specifications:** [PRD](docs/spec/prd.md) | [PRD+](docs/spec/prd-plus.md) | [Success Metrics](docs/spec/success-metrics.md)
+
+**Architecture:** [System Overview](docs/architecture/system-overview.md) | [Layer Interactions](docs/architecture/layer-interactions.md) | [Memory](docs/architecture/memory-architecture.md) | [Lifecycle](docs/architecture/experiment-lifecycle.md)
+
+**Guides:** [Developer Guide](docs/guides/developer-guide.md) | [Experimentation Playbook](docs/guides/experimentation-playbook.md) | [Contributing](docs/guides/contributing.md)

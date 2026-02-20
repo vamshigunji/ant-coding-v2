@@ -6,7 +6,7 @@
 **Goal:** Build the evaluation system that computes all 4 tiers of metrics (PRD+), runs the updated LLM-as-Judge scoring, calculates pass@k, and classifies failures. This is where raw results become publishable evidence.
 
 **Dependencies:** S5-E1 (event logger for token data), S4-E2 (runner for TaskResults), S3-E3 (PRD+ type fields)  
-**Reference:** `docs/prd-plus.md` Sections 1, 3, 4, 6; `docs/success-metrics.md`
+**Reference:** `docs/spec/prd-plus.md` Sections 1, 3, 4, 6; `docs/spec/success-metrics.md`
 
 ---
 
@@ -100,7 +100,7 @@ Then metrics.failure_categories == {"planning": 2, "implementation": 0, "integra
 **Description:**  
 Build the LLM-as-Judge that scores patches on the PRD+ dimensions: correctness, minimality, code_quality, completeness (replacing the original PRD's "efficiency" with "minimality").
 
-**Reference:** `docs/prd-plus.md` Section 3
+**Reference:** `docs/spec/prd-plus.md` Section 3
 
 **Acceptance Criteria:**
 
@@ -183,7 +183,7 @@ Then pass@k returns 1.0 for all k
 **Description:**  
 Build the FailureClassifier that categorizes WHY failed tasks failed. Uses a cheap/fast LLM to classify each failure into one of 6 categories. This enables the failure_categories breakdown in ExperimentMetrics.
 
-**Reference:** `docs/prd-plus.md` Section 4
+**Reference:** `docs/spec/prd-plus.md` Section 4
 
 **Acceptance Criteria:**
 

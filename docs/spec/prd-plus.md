@@ -1,8 +1,8 @@
 # PRD+ : Additional Requirements
 
-**Applies to:** `docs/prd.md`  
+**Applies to:** `docs/spec/prd.md`  
 **Status:** This document extends the PRD. Where they conflict, PRD+ wins.  
-**Why this exists:** The original PRD designed the framework layers but underspecified the metrics collection. This addendum ensures the framework can collect all 11 success metrics defined in `docs/success-metrics.md`.
+**Why this exists:** The original PRD designed the framework layers but underspecified the metrics collection. This addendum ensures the framework can collect all 11 success metrics defined in `docs/spec/success-metrics.md`.
 
 ---
 

@@ -6,7 +6,7 @@
 **Goal:** Full pipeline integration tests, edge case coverage, developer documentation, and code quality. After this epic, the framework is production-ready for experimentation.
 
 **Dependencies:** All prior epics  
-**Reference:** `docs/prd.md`, `docs/prd-plus.md`, `docs/experimentation-playbook.md`
+**Reference:** `docs/spec/prd.md`, `docs/spec/prd-plus.md`, `docs/guides/experimentation-playbook.md`
 
 ---
 
@@ -103,7 +103,7 @@ Then it includes:
 
 **Files to Create/Modify:**
 - `README.md` (update)
-- `docs/developer-guide.md` (new)
+- `docs/guides/developer-guide.md` (new)
 
 ---
 
