@@ -1,28 +1,24 @@
-# Branch Summary: feature/S6-E2-S02
+# Branch Summary: feature/S6-E2-S03
 
 ## Story
-S6-E2-S02: A2A Agent Registration
+S6-E2-S03: Protocol Tests
 
 ## What Changed
-- Created `src/ant_coding/protocols/a2a_server.py` with:
-  - `AgentCard`: A2A agent card with name, description, capabilities, input/output schemas
-  - `A2AServer`: Server for registering patterns as A2A agents
-  - `register_pattern()`: Generate AgentCard from OrchestrationPattern metadata
-  - `register_all()`: Register all patterns from OrchestrationRegistry
-  - `discover()`: Return all Agent Cards for A2A discovery
-  - `submit_task()`: Route tasks to specified agent with error handling
-  - Standard input/output schemas for task submission
+- Created `tests/test_protocols.py` with 15 tests:
+  - MCP tests (10): list_tools, schema validation, call_tool for code_execute/file_read/file_write/file_list/git_diff/search_code, unknown tool error, exception handling
+  - A2A tests (5): AgentCard serialization, register_pattern, discover, get_agent, submit_task unknown agent
+- All tests use mock ToolRegistry and mock OrchestrationPatterns
 
 ## Key Decisions
-- AgentCards generated from OrchestrationPattern.name(), description(), get_agent_definitions()
-- No A2A SDK dependency — framework-native implementation wrappable by any A2A SDK
-- Task submission is async, delegates to pattern.solve()
+- Used unittest.mock to avoid real tool/pattern dependencies
+- Tested both happy paths and error paths (unknown tool, exceptions)
+- Async test for A2A submit_task using pytest-asyncio
 
 ## Files Touched
-- `src/ant_coding/protocols/a2a_server.py` (new)
-- `.agent/sprint.yml` (S6-E2-S02 done)
+- `tests/test_protocols.py` (new)
+- `.agent/sprint.yml` (S6-E2-S03 done, S6-E2 review)
 
 ## How to Verify
 ```bash
-pytest tests/ -v  # full suite: 224 passed, 1 skipped
+pytest tests/ -v  # full suite: 239 passed, 1 skipped
 ```
