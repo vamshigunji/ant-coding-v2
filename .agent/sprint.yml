@@ -499,7 +499,7 @@ sprint_6:
         - id: S6-E1-S04
           name: "Cross-Experiment Comparison CLI"
           branch: feature/S6-E1-S04
-          status: not-started
+          status: done
           points: 3
 
         - id: S6-E1-S05

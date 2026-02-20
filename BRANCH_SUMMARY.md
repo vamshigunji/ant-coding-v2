@@ -1,25 +1,25 @@
-# Branch Summary: feature/S6-E1-S03
+# Branch Summary: feature/S6-E1-S04
 
 ## Story
-S6-E1-S03: Session Replay
+S6-E1-S04: Cross-Experiment Comparison CLI
 
 ## What Changed
-- Created `src/ant_coding/observability/replay.py` with `SessionReplay` class:
-  - Loads events from JSONL file, deserializes back to Event objects
-  - `step(count)`: Returns next N events, advances cursor
-  - `state_at(event_index)`: Reconstructs memory state by replaying MEMORY_WRITE events
-  - `token_curve()`: Returns cumulative token curve as (event_index, tokens) tuples
-  - `get_events()`: Filtered event retrieval by type and task_id
-  - `reset()`: Resets cursor to beginning
+- Created `scripts/compare_results.py`:
+  - Single experiment: prints all 4 tiers of metrics
+  - Two+ experiments: pairwise comparison with statistical tests
+  - Loads metrics from `{result_dir}/metrics.json`
+  - Saves `comparison_report.md` to current directory
+  - Supports N experiments (produces pairwise comparisons for all pairs)
 
 ## Key Decisions
-- Events deserialized back to full Event objects (not raw dicts) for type safety
-- State reconstruction replays all MEMORY_WRITE events up to the index
-- Token curve only includes LLM_CALL events (where tokens are consumed)
+- Uses `metrics_from_json()` for loading (JSON round-trip from S6-E1-S02)
+- Per-task results not available from metrics.json alone, so statistical tests
+  may have limited data (McNemar's needs per-task results)
+- Report saved alongside console output for easy sharing
 
 ## Files Touched
-- `src/ant_coding/observability/replay.py` (new)
-- `.agent/sprint.yml` (S6-E1-S03 done)
+- `scripts/compare_results.py` (new)
+- `.agent/sprint.yml` (S6-E1-S04 done)
 
 ## How to Verify
 ```bash
