@@ -1,25 +1,29 @@
-# Branch Summary: feature/S6-E1-S04
+# Branch Summary: feature/S6-E1-S05
 
 ## Story
-S6-E1-S04: Cross-Experiment Comparison CLI
+S6-E1-S05: Experiment Registry Setup (PRD+)
 
 ## What Changed
-- Created `scripts/compare_results.py`:
-  - Single experiment: prints all 4 tiers of metrics
-  - Two+ experiments: pairwise comparison with statistical tests
-  - Loads metrics from `{result_dir}/metrics.json`
-  - Saves `comparison_report.md` to current directory
-  - Supports N experiments (produces pairwise comparisons for all pairs)
+- Created `src/ant_coding/core/experiment_registry.py` with `ExperimentRegistry`:
+  - `add_experiment()`: Register planned experiments with parent, variable_changed, hypothesis
+  - `update_status()`: Transition between planned/running/complete
+  - `update_outcome()`: Populate all 4 tiers of metrics from ExperimentMetrics
+  - `get_lineage()`: Trace parent chain back to root baseline
+  - `validate()`: Check for missing variable_changed and stale planned experiments
+  - `suggest_id()`: Auto-generate ID from parent + variable_changed slug
+  - `list_experiments()`, `get_experiment()`: Lookup helpers
+- Created `experiments/registry.yml` with empty template and documentation
 
 ## Key Decisions
-- Uses `metrics_from_json()` for loading (JSON round-trip from S6-E1-S02)
-- Per-task results not available from metrics.json alone, so statistical tests
-  may have limited data (McNemar's needs per-task results)
-- Report saved alongside console output for easy sharing
+- YAML-based registry (human-readable, version-controllable)
+- Naming convention: {parent}--{variable-slug} for automatic lineage in names
+- Infinity values stored as None in YAML (not representable)
+- Validation warns (not errors) for stale planned experiments
 
 ## Files Touched
-- `scripts/compare_results.py` (new)
-- `.agent/sprint.yml` (S6-E1-S04 done)
+- `src/ant_coding/core/experiment_registry.py` (new)
+- `experiments/registry.yml` (new)
+- `.agent/sprint.yml` (S6-E1-S05 done)
 
 ## How to Verify
 ```bash
