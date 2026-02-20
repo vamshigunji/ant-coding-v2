@@ -558,7 +558,7 @@ sprint_6:
         - id: S6-E3-S03
           name: "README and Developer Documentation"
           branch: feature/S6-E3-S03
-          status: not-started
+          status: done
           points: 3
 
         - id: S6-E3-S04
