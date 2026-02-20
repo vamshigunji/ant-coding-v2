@@ -1,26 +1,26 @@
-# Branch Summary: feature/S6-E2-S01
+# Branch Summary: feature/S6-E2-S02
 
 ## Story
-S6-E2-S01: MCP Tool Wrapping
+S6-E2-S02: A2A Agent Registration
 
 ## What Changed
-- Created `src/ant_coding/protocols/__init__.py`
-- Created `src/ant_coding/protocols/mcp_server.py` with:
-  - `TOOL_DEFINITIONS`: 7 MCP tool schemas (code_execute, file_read, file_write, file_list, git_diff, git_apply_patch, search_code)
-  - `MCPToolServer`: MCP-compliant server wrapping ToolRegistry
-  - `list_tools()`: Returns all tool definitions with input schemas
-  - `call_tool()`: Invokes tools by name with structured error handling
-  - Handler methods for each tool delegating to ToolRegistry instances
+- Created `src/ant_coding/protocols/a2a_server.py` with:
+  - `AgentCard`: A2A agent card with name, description, capabilities, input/output schemas
+  - `A2AServer`: Server for registering patterns as A2A agents
+  - `register_pattern()`: Generate AgentCard from OrchestrationPattern metadata
+  - `register_all()`: Register all patterns from OrchestrationRegistry
+  - `discover()`: Return all Agent Cards for A2A discovery
+  - `submit_task()`: Route tasks to specified agent with error handling
+  - Standard input/output schemas for task submission
 
 ## Key Decisions
-- Tool definitions follow MCP input_schema format (JSON Schema)
-- Error handling returns `{content, is_error}` instead of raising (MCP convention)
-- No MCP SDK dependency — tool definitions and invocation are framework-native, can be wrapped by any MCP SDK
+- AgentCards generated from OrchestrationPattern.name(), description(), get_agent_definitions()
+- No A2A SDK dependency — framework-native implementation wrappable by any A2A SDK
+- Task submission is async, delegates to pattern.solve()
 
 ## Files Touched
-- `src/ant_coding/protocols/__init__.py` (new)
-- `src/ant_coding/protocols/mcp_server.py` (new)
-- `.agent/sprint.yml` (S6-E2-S01 done, S6-E2 in-progress)
+- `src/ant_coding/protocols/a2a_server.py` (new)
+- `.agent/sprint.yml` (S6-E2-S02 done)
 
 ## How to Verify
 ```bash

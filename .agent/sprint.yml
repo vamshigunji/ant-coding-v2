@@ -529,7 +529,7 @@ sprint_6:
         - id: S6-E2-S02
           name: "A2A Agent Registration"
           branch: feature/S6-E2-S02
-          status: not-started
+          status: done
           points: 5
 
         - id: S6-E2-S03
